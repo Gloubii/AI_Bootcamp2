@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\CMakeFiles\c82faf520371798327085ea8b1deab92\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{67AA0EAC-B78C-3838-A746-E07BE2D55652}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\AIBot.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\Logger.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\MyBotLogic.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\dllmain.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\Interop_API.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\stdafx.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\AIBot.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\BotLogicIF.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\ConfigData.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\Globals.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\InitData.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\Logger.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\MyBotLogic.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\TurnData.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\Interop_API.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\stdafx.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\targetver.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Headers">
+      <UniqueIdentifier>{A6655436-2426-349E-9DF6-AA0AFC879B65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources">
+      <UniqueIdentifier>{2D87F268-60E8-3987-9A98-CB15921902BE}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
