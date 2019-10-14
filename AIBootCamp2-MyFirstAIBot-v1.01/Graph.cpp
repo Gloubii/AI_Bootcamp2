@@ -163,6 +163,14 @@ std::vector<Hex> Graph::GetGoals() const
 	return goals;
 }
 
+std::vector<Node> Graph::getNodes() const
+{
+	vector<Node> v_nodes;
+	auto getHex = [&v_nodes](auto h) {v_nodes(h.second); };
+	for_each(nodes.cbegin(), nodes.cend(), getHex);
+	return v_nodes;
+}
+
 
 vector<Edge> Graph::aStar(const Hex& start, const Hex& finish) const
 {

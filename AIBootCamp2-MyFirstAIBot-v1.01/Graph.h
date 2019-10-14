@@ -75,6 +75,7 @@ public:
 	std::vector<Edge> getConnections(const Hex& n) const;
 	EHexCellDirection getDirection(const Edge& e) const;
 	std::vector<Node> getNeighbours(const Hex& hex) const;
+	std::vector<Node> getNodes() const;
 
 	std::vector<Edge> aStar(const Hex& start, const Hex& finish) const;
 
