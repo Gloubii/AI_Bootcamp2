@@ -107,7 +107,7 @@ int main(int argc, char** argv) {
 	
 	MyBotLogic myBot;
 	
-	SInitData initData = jsonToInitData("map5.json");
+	/*SInitData initData = jsonToInitData("map5.json");
 	
 
 	
@@ -129,6 +129,6 @@ int main(int argc, char** argv) {
 
 	ofstream os("orders.json");
 	os << buffer.GetString();
-
+	*/
 	return 0;
 }
