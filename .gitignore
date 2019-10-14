@@ -1,3 +1,10 @@
 *
-!*.h
-!*.cpp
+
+!/*
+!/OutilDebug/CreateMap
+
+!/AIBootCamp2-MyFirstAIBot-v1.01/*.h
+!/AIBootCamp2-MyFirstAIBot-v1.01/*.cpp
+
+!/OutilDebug/CreateMap/*.cpp
+!/OutilDebug/CreateMap/*.h
