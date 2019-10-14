@@ -16,11 +16,11 @@ mkdir %bDirVar%
 cd %bDirVar%
 
 if exist "%CMAKE_PATH%/cmake.exe" (
-"%CMAKE_PATH%/cmake" .. -G "Visual Studio 15 2017 Win64"
+"%CMAKE_PATH%/cmake" .. -G "Visual Studio 16 2019"
 goto generated
 )
 
-cmake .. -G "Visual Studio 15 2017 Win64"
+cmake .. -G "Visual Studio 16 2019"
 
 :generated
 
