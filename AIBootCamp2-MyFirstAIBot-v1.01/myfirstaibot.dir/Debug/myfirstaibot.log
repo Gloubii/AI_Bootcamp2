@@ -1,12 +1,2 @@
-﻿  AIBot.cpp
-  Logger.cpp
-  MyBotLogic.cpp
-  dllmain.cpp
-  Interop_API.cpp
-  stdafx.cpp
-  Graph.cpp
-  Hex.cpp
-  Génération de code en cours...
-  LINK : E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\Debug\myfirstaibot.dll introuvable ou non généré par la dernière édition de liens incrémentielle ; édition de liens complète en cours
-     Création de la bibliothèque E:/AI_Bootcamp/Iteration2/git/AI_Bootcamp2/AIBootCamp2-MyFirstAIBot-v1.01/Debug/myfirstaibot.lib et de l'objet E:/AI_Bootcamp/Iteration2/git/AI_Bootcamp2/AIBootCamp2-MyFirstAIBot-v1.01/Debug/myfirstaibot.exp
+﻿  Graph.cpp
   myfirstaibot.vcxproj -> E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\Debug\myfirstaibot.dll

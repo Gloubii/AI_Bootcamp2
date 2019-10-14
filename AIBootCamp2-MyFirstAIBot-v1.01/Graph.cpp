@@ -31,6 +31,8 @@ STileInfo Node::getTile() const
 
 Edge::Edge(Hex node1, Hex node2, int cost) : hex_from(node1), hex_to(node2), cost(cost) {}
 
+Edge::Edge(Hex node1, Hex node2, int cost, EObjectType object) : hex_from(node1), hex_to(node2), cost(cost), object(object) {}
+
 Hex Edge::getFrom() const 
 {
 	return hex_from;
@@ -40,10 +42,18 @@ Hex Edge::getTo() const
 	return hex_to;
 }
 
+int Edge::getCost() const
+{
+	return cost;
+}
+
 string Edge::toString() const
 {
 	string out = "";
-	out.append("lien entre ");
+	if (cost != -1)
+		out.append("lien entre ");
+	else
+		out.append("obstacle entre ");
 	out.append(hex_from.toString());
 	out.append(" et ");
 	out.append(hex_to.toString());
@@ -74,11 +84,17 @@ Graph::Graph(const SInitData& initData)
 		for (int dir = 0; dir < 6; ++dir) {
 			auto voisin = hex.GetNeighbour((EHexCellDirection)dir);
 			if (Contains(voisin)) {
-				auto isWall = [hex, voisin, dir](SObjectInfo objet) {
-					return	(objet.q == hex.x && objet.r == hex.y && objet.cellPosition == (EHexCellDirection)dir) ||
-							(objet.q == voisin.x && objet.r == voisin.y && objet.cellPosition == (EHexCellDirection)((dir + 3) % 6)); };
+				EObjectType object;
+				auto isWall = [hex, voisin, dir, &object](SObjectInfo objet) {
+					if (!((objet.q == hex.x && objet.r == hex.y && objet.cellPosition == (EHexCellDirection)dir) ||
+						(objet.q == voisin.x && objet.r == voisin.y && objet.cellPosition == (EHexCellDirection)((dir + 3) % 6))))
+						return false;
+					object = (EObjectType) objet.types[0];
+					return true; };
 				if (find_if(begin(objects), end(objects), isWall) == end(objects))
 					edges.push_back(Edge(hex, voisin, 1));
+				else
+					edges.push_back(Edge(hex, voisin, -1));
 			}
 		}
 	}
@@ -115,11 +131,17 @@ bool Graph::Update(const STurnData& turnData)
 		for (int dir = 0; dir < 6; ++dir) {
 			auto voisin = hex.GetNeighbour((EHexCellDirection)dir);
 			if (Contains(voisin)) {
-				auto isWall = [hex, voisin, dir](SObjectInfo objet) {
-					return	(objet.q == hex.x && objet.r == hex.y && objet.cellPosition == (EHexCellDirection)dir) ||
-						(objet.q == voisin.x && objet.r == voisin.y && objet.cellPosition == (EHexCellDirection)((dir + 3) % 6)); };
+				EObjectType object;
+				auto isWall = [hex, voisin, dir, &object](SObjectInfo objet) {
+					if (!((objet.q == hex.x && objet.r == hex.y && objet.cellPosition == (EHexCellDirection)dir) ||
+						(objet.q == voisin.x && objet.r == voisin.y && objet.cellPosition == (EHexCellDirection)((dir + 3) % 6))))
+						return false;
+					object = (EObjectType)objet.types[0];
+					return true; };
 				if (find_if(begin(objects), end(objects), isWall) == end(objects))
 					edges.push_back(Edge(hex, voisin, 1));
+				else
+					edges.push_back(Edge(hex, voisin, -1));
 			}
 		}
 	}
@@ -127,6 +149,14 @@ bool Graph::Update(const STurnData& turnData)
 }
 
 vector<Edge> Graph::getConnections(const Hex& hex) const
+{
+	vector<Edge> v;
+	auto addEdges = [&v, hex](Edge e) {if (e.hex_from == hex && e.getCost() != -1) v.push_back(e); };
+	for_each(begin(edges), end(edges), addEdges);
+	return v;
+}
+
+vector<Edge> Graph::getAllConnections(const Hex& hex) const
 {
 	vector<Edge> v;
 	auto addEdges = [&v, hex](Edge e) {if (e.hex_from == hex) v.push_back(e); };
