@@ -35,6 +35,7 @@
 *.db
 *.opendb
 *.tlog
+./AIBootCamp2-MyFirstAIBot-v1.01/PlayLocalMatch.*
 
 jobfiles.txt
 !build-solution-x64/
