@@ -1,9 +1,12 @@
 #include "MyBotLogic.h"
-
+#include <algorithm>
+#include <vector>
+#include <string>
 #include "Globals.h"
 #include "ConfigData.h"
 #include "InitData.h"
 #include "TurnData.h"
+#include "Graph.h"
 
 MyBotLogic::MyBotLogic()
 {
@@ -27,11 +30,15 @@ void MyBotLogic::Configure(const SConfigData& _configData)
 	//Write Code Here
 }
 
+Graph g;
+
 void MyBotLogic::Init(const SInitData& _initData)
 {
 	BOT_LOGIC_LOG(mLogger, "Init", true);
-	
-	//Write Code Here
+
+	//Create graph
+	g = Graph(_initData);
+	BOT_LOGIC_LOG(mLogger, g.toString(), true);
 }
 
 void MyBotLogic::GetTurnOrders(const STurnData& _turnData, std::list<SOrder>& _orders)
