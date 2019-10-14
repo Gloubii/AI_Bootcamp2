@@ -1,0 +1,33 @@
+2019-10-14 14:55:23
+
+Configure
+Init
+ : Q= 2	R= -1
+ : Q= 0	R= 1
+ : Q= 1	R= 0
+ : Q= 0	R= 2
+ : Q= 2	R= 1
+ : Q= 1	R= 1
+ : Q= 1	R= 2
+ : Q= 2	R= 0
+ : Q= 0	R= 0
+nb edges = 16
+lien entre x : 2 , y : -1 , z : -1 et x : 2 , y : 0 , z : -2
+lien entre x : 0 , y : 1 , z : -1 et x : 0 , y : 0 , z : 0
+lien entre x : 0 , y : 1 , z : -1 et x : 0 , y : 2 , z : -2
+lien entre x : 0 , y : 1 , z : -1 et x : 1 , y : 0 , z : -1
+lien entre x : 1 , y : 0 , z : -1 et x : 0 , y : 0 , z : 0
+lien entre x : 1 , y : 0 , z : -1 et x : 0 , y : 1 , z : -1
+lien entre x : 0 , y : 2 , z : -2 et x : 0 , y : 1 , z : -1
+lien entre x : 0 , y : 2 , z : -2 et x : 1 , y : 2 , z : -3
+lien entre x : 2 , y : 1 , z : -3 et x : 1 , y : 2 , z : -3
+lien entre x : 1 , y : 1 , z : -2 et x : 2 , y : 0 , z : -2
+lien entre x : 1 , y : 2 , z : -3 et x : 0 , y : 2 , z : -2
+lien entre x : 1 , y : 2 , z : -3 et x : 2 , y : 1 , z : -3
+lien entre x : 2 , y : 0 , z : -2 et x : 2 , y : -1 , z : -1
+lien entre x : 2 , y : 0 , z : -2 et x : 1 , y : 1 , z : -2
+lien entre x : 0 , y : 0 , z : 0 et x : 0 , y : 1 , z : -1
+lien entre x : 0 , y : 0 , z : 0 et x : 1 , y : 0 , z : -1
+
+GetTurnOrders
+GetTurnOrders
