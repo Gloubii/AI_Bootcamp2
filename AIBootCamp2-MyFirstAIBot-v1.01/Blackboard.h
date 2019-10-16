@@ -5,37 +5,53 @@
 #include <string>
 #include <memory>
 
-
+	//The key must be hashable
 template<class Key>
 class Blackboard
 {
-	Blackboard* parent;
+	Blackboard<Key>* parent;
 
-	using ValuePtr = std::shared_ptr<void>;
+	using Any = void;
+	using ValuePtr = std::unique_ptr<Any>;
 
-	std::unordered_map<Key, ValuePtr> enumMap;
+	std::unordered_map<Key, ValuePtr> map;
 
 public:
-	Blackboard(Blackboard* parent = nullptr);
+	Blackboard(Blackboard<Key>* parent = nullptr) : parent{ parent } {};
 
-	void write(const Key& key, ValuePtr value);
-	void write(const Key& key, int value);
-	void write(const Key& key, std::string value);
-	void write(const Key& key, float value);
-	void write(const Key& key, bool value);
-
-	//Return nullptr if not in the blackboard
-	ValuePtr get(const Key& key);
+	template<class ValueType>
+	void write(const Key& key, const ValueType &value) {
+		map[key] = std::make_unique<ValueType>(value);
+	}
 
 	class ValueNotFound {};
 	//Throw ValuenotFound if the value is not in the blackboard
-	bool getBool(const Key& key);
-	int getInt(const Key& key);
-	float getFloat(const Key& key);
-	std::string getString(const Key& key);
+	template<class ValueType>
+	ValueType getValue(const Key& key) {
+		if (auto res = get(key)) {
+			return *static_cast<ValueType*>(res);
+		}
+		if (parent) {
+			return parent->getValue<ValueType>(key);
+		}
+		throw ValueNotFound{};
+	}
 
 	//Return true if erase sucessfully
-	bool erase(const Key& key);
+	bool erase(const Key& key) {
+		return map.erase(key);
+	}
+
+	void clean() {
+		map.clear();
+	}
+
+private:
+	//Return nullptr if not in the blackboard
+	Any* get(const Key& key) {
+		return map[key].get();
+	}
+
 };
 
 #endif
