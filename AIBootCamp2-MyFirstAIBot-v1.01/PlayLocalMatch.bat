@@ -10,7 +10,7 @@ rem set AIBOOTCAMP2_ENGINE_DIR=D:\AIBootcamp2\AIBootcamp2\Releases
 rem set AIBOT_PATH=D:\AIBootcamp2\LesOutardes\build-solution-x64\Debug\lesoutardes.dll
 rem set TEAM=LesOutardes
 
-set AIBOOTCAMP2_ENGINE_DIR=E:\AI_Bootcamp\version_moteur\AIBootcamp2_v1.02
+set AIBOOTCAMP2_ENGINE_DIR=E:\AI_Bootcamp\version_moteur\AIBootcamp2_v1.03
 set AIBOT_PATH=.\Debug\myfirstaibot.dll
 set TEAM=MOI
 

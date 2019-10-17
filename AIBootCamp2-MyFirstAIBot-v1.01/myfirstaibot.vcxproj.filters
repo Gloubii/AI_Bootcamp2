@@ -25,6 +25,12 @@
     <ClCompile Include="Hex.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="OutilDebug\IOGraphe.cpp">
+      <Filter>Sources\OutilDebug</Filter>
+    </ClCompile>
+    <ClCompile Include="OutilDebug\TestGraphe.cpp">
+      <Filter>Sources\OutilDebug</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\AIBot.h">
@@ -66,6 +72,12 @@
     <ClInclude Include="Hex.h">
       <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="OutilDebug\IOGraphe.h">
+      <Filter>Headers\OutilDebug</Filter>
+    </ClInclude>
+    <ClInclude Include="OutilDebug\TestGraphe.h">
+      <Filter>Headers\OutilDebug</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\CMakeLists.txt" />
@@ -76,6 +88,12 @@
     </Filter>
     <Filter Include="Sources">
       <UniqueIdentifier>{2D87F268-60E8-3987-9A98-CB15921902BE}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\OutilDebug">
+      <UniqueIdentifier>{f39f37a4-36e1-42e1-962a-619a1c92a349}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\OutilDebug">
+      <UniqueIdentifier>{d9b47edb-67c9-46d7-ae78-15bd0ed6431b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

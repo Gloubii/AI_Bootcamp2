@@ -8,6 +8,10 @@
 #include "TurnData.h"
 #include "Graph.h"
 
+#include "OutilDebug/IOGraphe.h"
+#include "OutilDebug/TestGraphe.h"
+
+
 MyBotLogic::MyBotLogic()
 {
 	//Write Code Here
@@ -38,6 +42,10 @@ void MyBotLogic::Init(const SInitData& _initData)
 
 	//Create graph
 	g = Graph(_initData);
+	//CheckNeighbours(g);
+	Graph2JsonFile(g);
+	
+	
 	BOT_LOGIC_LOG(mLogger, g.toString(), true);
 }
 

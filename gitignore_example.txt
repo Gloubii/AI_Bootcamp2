@@ -33,9 +33,17 @@
 
 # Others
 *.db
+*.pdb
 *.opendb
 *.tlog
-./AIBootCamp2-MyFirstAIBot-v1.01/PlayLocalMatch.*
+*.bat
+*.ipch
+*.db*
+*.txt
+*.log
+*.replay
+
+
 
 jobfiles.txt
 !build-solution-x64/
