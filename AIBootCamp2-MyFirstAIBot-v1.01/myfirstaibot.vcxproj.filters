@@ -10,6 +10,12 @@
     <ClCompile Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\MyBotLogic.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\Graph.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\Hex.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
     <ClCompile Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\dllmain.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
@@ -17,12 +23,6 @@
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\stdafx.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Graph.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Hex.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="OutilDebug\IOGraphe.cpp">
@@ -57,6 +57,12 @@
     <ClInclude Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\TurnData.h">
       <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\Graph.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\Hex.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
     <ClInclude Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\Interop_API.h">
       <Filter>Headers</Filter>
     </ClInclude>
@@ -64,12 +70,6 @@
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\targetver.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Graph.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Hex.h">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="OutilDebug\IOGraphe.h">
@@ -89,11 +89,11 @@
     <Filter Include="Sources">
       <UniqueIdentifier>{2D87F268-60E8-3987-9A98-CB15921902BE}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Headers\OutilDebug">
-      <UniqueIdentifier>{f39f37a4-36e1-42e1-962a-619a1c92a349}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Sources\OutilDebug">
-      <UniqueIdentifier>{d9b47edb-67c9-46d7-ae78-15bd0ed6431b}</UniqueIdentifier>
+      <UniqueIdentifier>{2b00b68c-f35b-4171-b5a7-1cbbe241ebec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\OutilDebug">
+      <UniqueIdentifier>{b9112f8f-8cca-42e3-bf2b-0e3f563f4162}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
