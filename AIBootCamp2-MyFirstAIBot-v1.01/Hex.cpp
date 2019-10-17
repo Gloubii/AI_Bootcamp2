@@ -23,7 +23,28 @@ int Hex::DistanceTo(const Hex hex) const
 	return (std::abs(x - hex.x) + std::abs(y - hex.y) + std::abs(z - hex.z))/2;
 }
 
-
+int Hex::NbBorder(int maxQ, int maxR) const
+{
+	if (x == 0) {
+		if (y == 0)
+			return 4;
+		if (y == (maxR - 1))
+			return (y % 2) ? 3 : 4;
+		return 2;
+	}
+	if (x == (maxQ - 1)) {
+		if(x/2+y == (maxR-1))
+			return (x % 2) ? 4 : 3;
+		if(x/2+y == 0)
+			return (x % 2) ? 3 : 4;
+		return 2;
+	}
+	if (x/2+y == (maxQ -1))
+		return (x % 2) ? 3 : 1;
+	if (x / 2 + y == (maxQ - 1))
+		return (x % 2) ? 1 : 3;
+	return 0;
+}
 
 Hex Hex::GetNeighbour(EHexCellDirection direction) const
 {

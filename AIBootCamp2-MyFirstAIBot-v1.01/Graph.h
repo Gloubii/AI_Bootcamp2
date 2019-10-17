@@ -18,6 +18,7 @@ class Node
 	friend class Graph;
 	//Hex hex;
 	STileInfo tile;
+	float value;
 
 public:
 	Node(STileInfo t);
@@ -28,6 +29,7 @@ public:
 	STileInfo getTile() const;
 	bool operator==(const Node& node) { return tile.q == node.tile.q && tile.r == node.tile.r; }
 	std::string toString() const;
+	float getValue() const;
 };
 
 class Edge
@@ -80,6 +82,7 @@ public:
 	EHexCellDirection getDirection(const Edge& e) const;
 	std::vector<Node> getNeighbours(const Hex& hex) const;
 	std::vector<Node> getNodes() const;
+	float updateValue(const Hex& n) const;
 
 	std::vector<Edge> aStar(const Hex& start, const Hex& finish) const;
 
@@ -90,5 +93,7 @@ private:
 	std::unordered_map<Hex, Node> nodes;
 	std::vector<Edge> edges;
 	std::vector<Hex> goals;
+	int maxRow;
+	int maxCol;
 };
 

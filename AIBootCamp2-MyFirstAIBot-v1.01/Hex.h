@@ -22,6 +22,7 @@ public:
 
 	void GetAxial(int& q, int& r) const;
 	int DistanceTo(const Hex hex) const;
+	int NbBorder(int maxQ, int maxR) const;
 	Hex GetNeighbour(EHexCellDirection direction) const;
 	std::vector<Hex> GetNeighbours() const;
 

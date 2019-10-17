@@ -34,6 +34,8 @@ SET( AIBOT_HEADERS
 	Logger.h
 	MyBotLogic.h	
 	TurnData.h
+
+	#Trystan
 	Graph.h
 	Hex.h
 	
@@ -49,6 +51,8 @@ SET( AIBOT_SRC
 	AIBot.cpp
 	Logger.cpp
 	MyBotLogic.cpp
+
+	#Trystan
 	Graph.cpp
 	Hex.cpp
 
