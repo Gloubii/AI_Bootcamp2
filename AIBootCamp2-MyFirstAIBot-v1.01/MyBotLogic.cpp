@@ -39,6 +39,7 @@ Graph g;
 void MyBotLogic::Init(const SInitData& _initData)
 {
 	BOT_LOGIC_LOG(mLogger, "Init", true);
+	BOT_LOGIC_LOG(mLogger, std::to_string(_initData.objectInfoArraySize), true);
 
 	//Create graph
 	g = Graph(_initData);

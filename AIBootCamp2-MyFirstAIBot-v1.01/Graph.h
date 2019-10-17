@@ -36,12 +36,15 @@ class Edge
 	Hex hex_from;
 	Hex hex_to;
 	int cost;
+	EObjectType object;
 public:
 	Edge(Hex node1, Hex node2, int cost);
+	Edge(Hex node1, Hex node2, int cost, EObjectType object);
 	Edge() = default;
 
 	Hex getFrom() const;
 	Hex getTo() const;
+	int getCost() const;
 	std::string toString() const;
 };
 
@@ -73,6 +76,7 @@ public:
 	std::vector<Hex> GetHexes() const;
 	std::vector<Hex> GetGoals() const;
 	std::vector<Edge> getConnections(const Hex& n) const;
+	std::vector<Edge> getAllConnections(const Hex& n) const;
 	EHexCellDirection getDirection(const Edge& e) const;
 	std::vector<Node> getNeighbours(const Hex& hex) const;
 	std::vector<Node> getNodes() const;
