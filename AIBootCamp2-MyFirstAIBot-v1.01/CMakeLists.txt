@@ -34,6 +34,12 @@ SET( AIBOT_HEADERS
 	Logger.h
 	MyBotLogic.h	
 	TurnData.h
+
+	#Leo
+	Task.h
+	NPC.h
+	OrderPath.h
+	Blackboard.h
 	
 	#DLL Stuff
 	Interop_API.h	
@@ -47,6 +53,11 @@ SET( AIBOT_SRC
 	AIBot.cpp
 	Logger.cpp
 	MyBotLogic.cpp
+
+	#Leo
+	Task.cpp
+	NPC.cpp
+	OrderPath.cpp
 
 	#DLL Stuff
 	dllmain.cpp

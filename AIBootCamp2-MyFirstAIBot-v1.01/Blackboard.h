@@ -12,16 +12,35 @@ class Blackboard
 	Blackboard<Key>* parent;
 
 	using Any = void;
-	using ValuePtr = std::unique_ptr<Any>;
+	using ValuePtr = Any*;
 
 	std::unordered_map<Key, ValuePtr> map;
 
 public:
 	Blackboard(Blackboard<Key>* parent = nullptr) : parent{ parent } {};
 
+	//Write the value in the current blackboard
+	//Overwrite the value if it already exist
 	template<class ValueType>
 	void write(const Key& key, const ValueType &value) {
-		map[key] = std::make_unique<ValueType>(value);
+		map[key] = new ValueType(value);
+		//map.insert({ key, new ValueType(value) });
+	}
+
+	class KeyNotFound {};
+	//Overwrite the value in the first blackboard containing the key
+	//Throw KeyNotFound if the key is not in the blackboard
+	template<class ValueType>
+	void overwrite(const Key& key, const ValueType& value) {
+		if (contain(key)) {
+			map[key] = new ValueType(value);
+			return;
+		}
+		if (parent) {
+			parent->overwrite(key, value);
+			return;
+		}
+		throw KeyNotFound{};
 	}
 
 	class ValueNotFound {};
@@ -37,19 +56,29 @@ public:
 		throw ValueNotFound{};
 	}
 
-	//Return true if erase sucessfully
+	bool contain(const Key& key) const {
+		return map.count(key);
+	}
+
+	//Return true if erased sucessfully
 	bool erase(const Key& key) {
+		delete map[key];
 		return map.erase(key);
 	}
 
 	void clean() {
+		for_each(begin(map), end(map), [](auto& pair) {delete pair.second; pair.second = nullptr; });
 		map.clear();
+	}
+
+	~Blackboard() {
+		clean();
 	}
 
 private:
 	//Return nullptr if not in the blackboard
 	Any* get(const Key& key) {
-		return map[key].get();
+		return map[key];
 	}
 
 };

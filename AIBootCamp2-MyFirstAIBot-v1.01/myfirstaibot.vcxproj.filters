@@ -10,6 +10,15 @@
     <ClCompile Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\MyBotLogic.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\Task.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\NPC.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\OrderPath.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
     <ClCompile Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\dllmain.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
@@ -19,13 +28,6 @@
     <ClCompile Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\stdafx.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="Graph.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Hex.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Blackboard.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\AIBot.h">
@@ -52,6 +54,18 @@
     <ClInclude Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\TurnData.h">
       <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\Task.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\NPC.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\OrderPath.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\Blackboard.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
     <ClInclude Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\Interop_API.h">
       <Filter>Headers</Filter>
     </ClInclude>
@@ -61,13 +75,6 @@
     <ClInclude Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\targetver.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="Graph.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Hex.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Blackboard.h" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\CMakeLists.txt" />
