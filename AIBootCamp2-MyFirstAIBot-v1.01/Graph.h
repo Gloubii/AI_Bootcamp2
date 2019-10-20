@@ -19,10 +19,11 @@ class Node
 	//Hex hex;
 	STileInfo tile;
 	float value;
+	bool unknown;
 
 public:
 	Node(STileInfo t);
-	Node() = default;
+	Node();				// Create an unknown node
 	bool isTile(const STileInfo* _tile) {
 		return _tile->q == tile.q && _tile->r == tile.r;
 	}
@@ -30,6 +31,7 @@ public:
 	bool operator==(const Node& node) { return tile.q == node.tile.q && tile.r == node.tile.r; }
 	std::string toString() const;
 	float getValue() const;
+	bool isUnknown() const;
 };
 
 class Edge
@@ -37,11 +39,11 @@ class Edge
 	friend class Graph;
 	Hex hex_from;
 	Hex hex_to;
-	int cost;
+	float cost;			// -1 -> object		-2 -> red		-3 -> unknown
 	EObjectType object;
 public:
-	Edge(Hex node1, Hex node2, int cost);
-	Edge(Hex node1, Hex node2, int cost, EObjectType object);
+	Edge(Hex node1, Hex node2, float cost);
+	Edge(Hex node1, Hex node2, float cost, EObjectType object);
 	Edge() = default;
 
 	Hex getFrom() const;
@@ -82,6 +84,7 @@ public:
 	EHexCellDirection getDirection(const Edge& e) const;
 	std::vector<Node> getNeighbours(const Hex& hex) const;
 	std::vector<Node> getNodes() const;
+	bool connected(Hex n1, Hex n2, bool allConnection) const;
 	float updateValue(const Hex& n) const;
 
 	std::vector<Edge> aStar(const Hex& start, const Hex& finish) const;

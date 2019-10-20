@@ -27,23 +27,23 @@ int Hex::NbBorder(int maxQ, int maxR) const
 {
 	if (x == 0) {
 		if (y == 0)
-			return 4;
+			return 4;					// top left
 		if (y == (maxR - 1))
-			return (y % 2) ? 3 : 4;
-		return 2;
+			return 3;					// top right
+		return 2;						// top middle
 	}
 	if (x == (maxQ - 1)) {
 		if(x/2+y == (maxR-1))
-			return (x % 2) ? 4 : 3;
+			return (x % 2) ? 4 : 3;		// bot right
 		if(x/2+y == 0)
-			return (x % 2) ? 3 : 4;
-		return 2;
+			return (x % 2) ? 3 : 4;		// bot left
+		return 2;						// bot middle
 	}
-	if (x/2+y == (maxQ -1))
-		return (x % 2) ? 3 : 1;
-	if (x / 2 + y == (maxQ - 1))
-		return (x % 2) ? 1 : 3;
-	return 0;
+	if (x / 2 + y == (maxR -1))
+		return (x % 2) ? 3 : 1;			// middle right
+	if (x / 2 + y == 0)
+		return (x % 2) ? 1 : 3;			// middle left
+	return 0;							// middle
 }
 
 Hex Hex::GetNeighbour(EHexCellDirection direction) const
@@ -56,6 +56,66 @@ std::vector<Hex> Hex::GetNeighbours() const
 	std::vector<Hex> neighbours;
 	for (int i = 0; i < EHexCellDirection::CENTER ; ++i)
 		neighbours.push_back(GetNeighbour(EHexCellDirection(i)));
+	return neighbours;
+}
+
+std::vector<EHexCellDirection> Hex::GetNeighboursDirection(int maxQ, int maxR) const
+{
+	std::vector<EHexCellDirection> neighbours;
+	bool xImpair = x % 2;
+	int pos = x / 2 + y;
+	if (x == 0) {		// top
+		neighbours.push_back(EHexCellDirection::SE);
+		if (y < (maxR - 1)) {
+			neighbours.push_back(EHexCellDirection::E);
+		}
+		if (y > 0) {
+			neighbours.push_back(EHexCellDirection::W);
+			neighbours.push_back(EHexCellDirection::SW);
+		}
+	}
+	else if (x == (maxQ - 1)) {	//bot
+		if (xImpair)
+			neighbours.push_back(EHexCellDirection::NW);
+		else
+			neighbours.push_back(EHexCellDirection::NE);
+		if (x / 2 + y < (maxR - 1)) {
+			neighbours.push_back(EHexCellDirection::E);
+			if (xImpair)
+				neighbours.push_back(EHexCellDirection::NE);
+		}
+		if (x / 2 + y > 0) {
+			neighbours.push_back(EHexCellDirection::W);
+			if (!xImpair)
+				neighbours.push_back(EHexCellDirection::NW);
+		}
+	}
+	else if (pos == (maxR - 1)) {
+		neighbours.push_back(EHexCellDirection::W);
+		if (xImpair) {
+			neighbours.push_back(EHexCellDirection::NW);
+			neighbours.push_back(EHexCellDirection::SW);
+			neighbours.push_back(EHexCellDirection::NE);
+			neighbours.push_back(EHexCellDirection::SE);
+		}
+	}
+	else if (pos == 0) {
+		neighbours.push_back(EHexCellDirection::E);
+		if (xImpair) {
+			neighbours.push_back(EHexCellDirection::NW);
+			neighbours.push_back(EHexCellDirection::SW);
+			neighbours.push_back(EHexCellDirection::NE);
+			neighbours.push_back(EHexCellDirection::SE);
+		}
+	}
+	else {
+		neighbours.push_back(EHexCellDirection::NW);
+		neighbours.push_back(EHexCellDirection::SW);
+		neighbours.push_back(EHexCellDirection::NE);
+		neighbours.push_back(EHexCellDirection::SE);
+		neighbours.push_back(EHexCellDirection::E);
+		neighbours.push_back(EHexCellDirection::W);
+	}
 	return neighbours;
 }
 
