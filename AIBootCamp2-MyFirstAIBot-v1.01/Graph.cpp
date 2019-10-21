@@ -242,7 +242,7 @@ bool Graph::Update(const STurnData& turnData)
 vector<Edge> Graph::getConnections(const Hex& hex) const
 {
 	vector<Edge> v;
-	auto addEdges = [&v, hex](Edge e) {if (e.hex_from == hex && e.getCost() != -1) v.push_back(e); };
+	auto addEdges = [&v, hex](Edge e) {if (e.hex_from == hex && e.getCost() > 0) v.push_back(e); };
 	for_each(begin(edges), end(edges), addEdges);
 	return v;
 }
