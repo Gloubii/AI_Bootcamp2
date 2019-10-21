@@ -3,15 +3,8 @@
 
 using namespace std;
 
-/*
-bool Graph::areConnected(Node n1, Node n2)
-{
-	auto exist = [n1, n2](Edge e) {return (e.id_n1 == n1.id && e.id_n2 == n2.id) || (e.id_n1 == n2.id && e.id_n2 == n1.id);};
-	return any_of(begin(edges), end(edges), exist);
-}
-*/
-
-Node::Node(STileInfo t) : tile(t) {}
+Node::Node(STileInfo t) : tile(t), value(0), unknown(false) {}
+Node::Node() : tile{},  value(0), unknown(true) {}
 
 string Node::toString() const
 {
@@ -20,6 +13,8 @@ string Node::toString() const
 	out.append(to_string(getTile().q));
 	out.append("	R= ");
 	out.append(to_string(getTile().r));
+	if (unknown)
+		out.append(" case inconnue");
 	out.append("\n");
 	return out;
 }
@@ -29,9 +24,19 @@ STileInfo Node::getTile() const
 	return tile;
 }
 
-Edge::Edge(Hex node1, Hex node2, int cost) : hex_from(node1), hex_to(node2), cost(cost) {}
+float Node::getValue() const
+{
+	return value;
+}
 
-Edge::Edge(Hex node1, Hex node2, int cost, EObjectType object) : hex_from(node1), hex_to(node2), cost(cost), object(object) {}
+bool Node::isUnknown() const
+{
+	return unknown;
+}
+
+Edge::Edge(Hex node1, Hex node2, float cost) : hex_from(node1), hex_to(node2), cost(cost) {}
+
+Edge::Edge(Hex node1, Hex node2, float cost, EObjectType object) : hex_from(node1), hex_to(node2), cost(cost), object(object) {}
 
 Hex Edge::getFrom() const 
 {
@@ -61,8 +66,16 @@ string Edge::toString() const
 	string out = "";
 	if (cost != -1)
 		out.append("lien entre ");
-	else
-		out.append("obstacle entre ");
+	else {
+		if (object == EObjectType::Wall)
+			out.append("mur entre ");
+		else if (object == EObjectType::Window)
+			out.append("fenetre entre ");
+		else {
+			out.append(to_string(object));
+			out.append("inconnue entre ");
+		}
+	}
 	out.append(hex_from.toString());
 	out.append(" et ");
 	out.append(hex_to.toString());
@@ -71,12 +84,11 @@ string Edge::toString() const
 }
 
 
-Graph::Graph(const SInitData& initData)
+Graph::Graph(const SInitData& initData) : maxRow(initData.rowCount), maxCol(initData.colCount)
 {
 	// add nodes
 	for (int i = 0; i < initData.tileInfoArraySize; ++i) {
-		if (initData.tileInfoArray[i].type != EHexCellType::Forbidden)
-			nodes.insert_or_assign(Hex{ initData.tileInfoArray[i].q, initData.tileInfoArray[i].r }, initData.tileInfoArray[i]);
+		nodes.insert_or_assign(Hex{ initData.tileInfoArray[i].q, initData.tileInfoArray[i].r }, Node(initData.tileInfoArray[i]));
 		if (initData.tileInfoArray[i].type == EHexCellType::Goal) {
 			goals.push_back(Hex{ initData.tileInfoArray[i].q, initData.tileInfoArray[i].r });
 		}
@@ -88,25 +100,54 @@ Graph::Graph(const SInitData& initData)
 		objects.push_back(initData.objectInfoArray[i]);
 	}
 	
-	// add edges
+	// add edges and unknown nodes
 	for (auto hex : GetHexes()) {
-		for (int dir = 0; dir < 6; ++dir) {
-			auto voisin = hex.GetNeighbour((EHexCellDirection)dir);
-			if (Contains(voisin)) {
+		for (EHexCellDirection dir : hex.GetNeighboursDirection(maxRow,maxCol)) {
+			auto voisin = hex.GetNeighbour(dir);
+			// edges of normal tiles
+			if (Contains(voisin) && !nodes.at(voisin).isUnknown()) {
 				EObjectType object;
 				auto isWall = [hex, voisin, dir, &object](SObjectInfo objet) {
-					if (!((objet.q == hex.x && objet.r == hex.y && objet.cellPosition == (EHexCellDirection)dir) ||
-						(objet.q == voisin.x && objet.r == voisin.y && objet.cellPosition == (EHexCellDirection)((dir + 3) % 6))))
+					if (!((objet.q == hex.x && objet.r == hex.y && objet.cellPosition == dir) ||
+						(objet.q == voisin.x && objet.r == voisin.y && objet.cellPosition == ((dir + 3) % 6))))
 						return false;
-					object = (EObjectType) objet.types[0];
+					object = (EObjectType) objet.types[objet.typesSize-1];
 					return true; };
 				if (find_if(begin(objects), end(objects), isWall) == end(objects))
-					edges.push_back(Edge(hex, voisin, 1));
+					if(nodes.at(hex).getTile().type == EHexCellType::Forbidden && nodes.at(voisin).getTile().type == EHexCellType::Forbidden)
+						edges.push_back(Edge(hex, voisin, -2));
+					else
+						edges.push_back(Edge(hex, voisin, 1));
 				else
-					edges.push_back(Edge(hex, voisin, -1));
+					edges.push_back(Edge(hex, voisin, -1, object));
+			}
+			// unknown tiles
+			else if (!Contains(voisin)) {
+				nodes.insert_or_assign(voisin, Node());
+				EObjectType object;
+				auto isWall = [hex, voisin, dir, &object](SObjectInfo objet) {
+					if (!((objet.q == hex.x && objet.r == hex.y && objet.cellPosition == dir) ||
+						(objet.q == voisin.x && objet.r == voisin.y && objet.cellPosition == ((dir + 3) % 6))))
+						return false;
+					object = (EObjectType)objet.types[objet.typesSize - 1];
+					return true; };
+				if (find_if(begin(objects), end(objects), isWall) == end(objects))
+					if (nodes.at(hex).getTile().type != EHexCellType::Forbidden || nodes.at(voisin).getTile().type != EHexCellType::Forbidden) {
+						edges.push_back(Edge(hex, voisin, -3));
+						edges.push_back(Edge(voisin, hex, -3));
+					}
+					else {
+						edges.push_back(Edge(hex, voisin, -1, object));
+						edges.push_back(Edge(voisin, hex, -1, object));
+					}
 			}
 		}
 	}
+
+
+	// calculer les values
+	for (auto h : GetHexes())
+		updateValue(h);
 }
 
 bool Graph::Update(const STurnData& turnData)
@@ -115,12 +156,19 @@ bool Graph::Update(const STurnData& turnData)
 	// add nodes
 	for (int i = 0; i < turnData.tileInfoArraySize; ++i) {
 		if (!Contains(Hex(turnData.tileInfoArray[i].q, turnData.tileInfoArray[i].r))) {
-			if (turnData.tileInfoArray[i].type != EHexCellType::Forbidden) {
-				nodes.insert_or_assign(Hex{ turnData.tileInfoArray[i].q, turnData.tileInfoArray[i].r }, turnData.tileInfoArray[i]);
-				changed.push_back(Hex{ turnData.tileInfoArray[i].q, turnData.tileInfoArray[i].r });
-			}
+			nodes.insert_or_assign(Hex{ turnData.tileInfoArray[i].q, turnData.tileInfoArray[i].r }, Node(turnData.tileInfoArray[i]));
+			changed.push_back(Hex{ turnData.tileInfoArray[i].q, turnData.tileInfoArray[i].r });
 			if (turnData.tileInfoArray[i].type == EHexCellType::Goal) {
 				goals.push_back(Hex{ turnData.tileInfoArray[i].q, turnData.tileInfoArray[i].r });
+			}
+		}
+		else {
+			Node n = nodes.at(Hex(turnData.tileInfoArray[i].q, turnData.tileInfoArray[i].r));
+			if (n.isUnknown()) {
+				n.tile = turnData.tileInfoArray[i];
+				if (turnData.tileInfoArray[i].type == EHexCellType::Goal) {
+					goals.push_back(Hex{ turnData.tileInfoArray[i].q, turnData.tileInfoArray[i].r });
+				}
 			}
 		}
 	}
@@ -134,26 +182,69 @@ bool Graph::Update(const STurnData& turnData)
 		}
 	}
 	
-
-	// add edges	TODO : optimiser pour ne pas repasser toute la map
-	for (auto hex : GetHexes()) {
-		for (int dir = 0; dir < 6; ++dir) {
-			auto voisin = hex.GetNeighbour((EHexCellDirection)dir);
-			if (Contains(voisin)) {
+	// add edges	
+	// TODO : addapter aux unknowns
+	// TODO : optimiser pour ne pas repasser toute la map
+	// add edges and unknown nodes
+	for (auto hex : changed) {
+		for (EHexCellDirection dir : hex.GetNeighboursDirection(maxRow, maxCol)) {
+			auto voisin = hex.GetNeighbour(dir);
+			// edges of normal tiles
+			if (Contains(voisin) && !nodes.at(voisin).isUnknown()) {
 				EObjectType object;
+				auto isStartEdge = [hex, voisin](Edge e) {return e.getFrom() == hex && e.getTo() == voisin; };
+				auto isEndEdge   = [hex, voisin](Edge e) {return e.getTo() == hex && e.getFrom() == voisin; };
+				auto e1 = find_if(begin(edges), end(edges), isStartEdge);
+				auto e2 = find_if(begin(edges), end(edges), isEndEdge);
 				auto isWall = [hex, voisin, dir, &object](SObjectInfo objet) {
-					if (!((objet.q == hex.x && objet.r == hex.y && objet.cellPosition == (EHexCellDirection)dir) ||
-						(objet.q == voisin.x && objet.r == voisin.y && objet.cellPosition == (EHexCellDirection)((dir + 3) % 6))))
+					if (!((objet.q == hex.x && objet.r == hex.y && objet.cellPosition == dir) ||
+						(objet.q == voisin.x && objet.r == voisin.y && objet.cellPosition == ((dir + 3) % 6))))
 						return false;
-					object = (EObjectType)objet.types[0];
+					object = (EObjectType)objet.types[objet.typesSize - 1];
 					return true; };
 				if (find_if(begin(objects), end(objects), isWall) == end(objects))
-					edges.push_back(Edge(hex, voisin, 1));
-				else
-					edges.push_back(Edge(hex, voisin, -1));
+					if (nodes.at(hex).getTile().type == EHexCellType::Forbidden && nodes.at(voisin).getTile().type == EHexCellType::Forbidden) {
+						e1._Ptr->cost = -2; 
+						e2._Ptr->cost = -2; 
+					} else {
+						e1._Ptr->cost = 1;
+						e2._Ptr->cost = 1;
+					}
+				else {
+					e1._Ptr->cost = -1;
+					e2._Ptr->cost = -1;
+					e1._Ptr->object = object;
+					e2._Ptr->object = object;
+				}
+			}
+			// unknown tiles
+			else {
+				nodes.insert_or_assign(voisin, Node());
+				EObjectType object;
+				auto isWall = [hex, voisin, dir, &object](SObjectInfo objet) {
+					if (!((objet.q == hex.x && objet.r == hex.y && objet.cellPosition == dir) ||
+						(objet.q == voisin.x && objet.r == voisin.y && objet.cellPosition == ((dir + 3) % 6))))
+						return false;
+					object = (EObjectType)objet.types[objet.typesSize - 1];
+					return true; };
+				if (find_if(begin(objects), end(objects), isWall) == end(objects))
+					if (nodes.at(hex).getTile().type != EHexCellType::Forbidden && nodes.at(voisin).getTile().type != EHexCellType::Forbidden) {
+						edges.push_back(Edge(hex, voisin, -3));
+						edges.push_back(Edge(voisin, hex, -3));
+					}
+					else {
+						edges.push_back(Edge(hex, voisin, -1, object));
+						edges.push_back(Edge(voisin, hex, -1, object));
+					}
 			}
 		}
 	}
+
+	// TODO : améliorer
+	// calculer les values
+	for (auto h : GetHexes())
+		updateValue(h);
+
 	return changed.size();
 }
 
@@ -208,6 +299,28 @@ std::vector<Node> Graph::getNodes() const
 	auto getHex = [&v_nodes](auto h) {v_nodes.push_back(h.second); };
 	for_each(nodes.cbegin(), nodes.cend(), getHex);
 	return v_nodes;
+}
+
+float Graph::updateValue(const Hex& n) const
+{
+	if (nodes.at(n).isUnknown())
+		return 6;							// TODO : 6 or 0 ?
+	// interêt, désinterêt, abscence d'info
+	std::vector<Edge> connections = getAllConnections(n);
+	int nbBorder = n.NbBorder(maxRow, maxCol);
+	int nbKnown = 0;
+	int nbWindow = 0;
+	int nbWall = 0;
+	for (auto e : connections) {
+		if (e.cost != -1)
+			++nbKnown;
+		else if (e.object == EObjectType::Window)
+			++nbWindow;
+		else
+			++nbWall;
+	}
+
+	return 6 - nbBorder - nbKnown + nbWindow;
 }
 
 
@@ -348,11 +461,23 @@ EHexCellDirection Graph::getDirection(const Edge& e) const
 	return EHexCellDirection::SW;
 }
 
+bool Graph::connected(Hex n1, Hex n2, bool allConnection) const
+{
+	auto linked = [n1, n2, allConnection](Edge e) {return (e.getFrom() == n1 && e.getTo() == n2) || (e.getFrom() == n2 && e.getTo() == n1); };
+	return false;
+}
+
 string Graph::toString() const
 {
-	string out = "";
+	string out = "taille : ";
+	out.append(to_string(maxRow));
+	out.append(" x ");
+	out.append(to_string(maxCol));
+	out.append("\n");
 	auto afficheNode = [&out](std::pair<Hex,Node> p)
 	{
+		out.append(p.first.toString());
+		out.append(":     ");
 		out.append(p.second.toString());
 	};
 	for_each(begin(nodes), end(nodes), afficheNode);
