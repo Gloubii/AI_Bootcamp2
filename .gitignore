@@ -1,42 +1,28 @@
-# Prerequisites
-*.d
-
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app
-
-# Others
+*
+!*.h
+!*.cpp
+!.gitignore
+!*.txt
+AIBootCamp2-MyFirstAIBot-v1.01/.vs/MyFirstAIBot/v16/.suo
+AIBootCamp2-MyFirstAIBot-v1.01/.vs/MyFirstAIBot/v16/.suo
+AIBootCamp2-MyFirstAIBot-v1.01/.vs/MyFirstAIBot/v16/.suo
 *.db
-*.opendb
+*.ipch
+*.ipch
+*.ipch
+*.db
+*.cmake
+*.bin
 *.tlog
-./AIBootCamp2-MyFirstAIBot-v1.01/PlayLocalMatch.*
-
-jobfiles.txt
-!build-solution-x64/
-build-solution-x64/*
+*.log
+*.exp
+*.ilk
+*.pdb
+*.log
+*.pdb
+*.filters
+*.pdb
+*.log
+*.tlog
+*.log
+*.idb

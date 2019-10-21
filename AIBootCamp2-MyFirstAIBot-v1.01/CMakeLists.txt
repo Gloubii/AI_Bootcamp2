@@ -41,6 +41,10 @@ SET( AIBOT_HEADERS
 	OrderPath.h
 	Blackboard.h
 	
+	#Trystan
+	Graph.h
+	Hex.h
+	
 	#DLL Stuff
 	Interop_API.h	
 	stdafx.h
@@ -58,6 +62,10 @@ SET( AIBOT_SRC
 	Task.cpp
 	NPC.cpp
 	OrderPath.cpp
+	
+	#Trystan
+	Graph.cpp
+	Hex.cpp
 
 	#DLL Stuff
 	dllmain.cpp
