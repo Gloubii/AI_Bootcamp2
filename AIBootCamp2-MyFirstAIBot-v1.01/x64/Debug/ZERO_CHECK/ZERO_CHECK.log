@@ -1,1 +1,8 @@
-﻿
+﻿  Checking Build System
+  CMake is re-running because E:/AI_Bootcamp/Iteration2/git/AI_Bootcamp2/AIBootCamp2-MyFirstAIBot-v1.01/CMakeFiles/generate.stamp is out-of-date.
+    the file 'E:/AI_Bootcamp/Iteration2/git/AI_Bootcamp2/AIBootCamp2-MyFirstAIBot-v1.01/CMakeLists.txt'
+    is newer than 'E:/AI_Bootcamp/Iteration2/git/AI_Bootcamp2/AIBootCamp2-MyFirstAIBot-v1.01/CMakeFiles/generate.stamp.depend'
+    result='-1'
+  -- Configuring done
+  -- Generating done
+  -- Build files have been written to: E:/AI_Bootcamp/Iteration2/git/AI_Bootcamp2/AIBootCamp2-MyFirstAIBot-v1.01
