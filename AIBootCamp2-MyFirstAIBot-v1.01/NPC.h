@@ -4,12 +4,15 @@
 #include"Hex.h"
 #include"OrderPath.h"
 #include "Globals.h"
+#include "Task.h"
+
 
 class NPC
 {
 	int uid, visionRange;
 	Hex position;
 	OrderPath orderPath;
+	BehaviorTree behaviorTree;
 
 public:
 	
@@ -26,6 +29,9 @@ public:
 	void BuildOrder(const std::vector<Hex> path);
 	void AddOrder(const SOrder& order);
 	SOrder NextOrder();
+
+	void SetBehaviorTree(const std::string &treeName);
+	void RunBehaviorTree(Task::BlackboardPtr blackboard = nullptr);
 
 	bool operator< (const NPC& npc) const;
 };

@@ -1,6 +1,6 @@
 #include "Task.h"
 
-std::unordered_map<Task::BehaviorTreeKey, Task::ClonePtr> Task::behaviorTreeLibrary;
+std::unordered_map<BehaviorTree::BehaviorTreeKey, BehaviorTree::ClonePtr> BehaviorTree::behaviorTreeLibrary;
 
 Task::ReturnValue operator! (Task::ReturnValue res) {
 	switch (res)
@@ -28,4 +28,9 @@ Task::ClonePtr TaskInterrupter::clone() {
 	lastCloned = clone;
 	clonedPerformers.clear();
 	return clone;
+}
+
+BehaviorTree BehaviorTree::createBehaviorTree(BehaviorTreeKey key)
+{
+	return BehaviorTree{ behaviorTreeLibrary[key]->clone() };
 }

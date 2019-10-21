@@ -69,6 +69,16 @@ SOrder NPC::NextOrder()
 	
 }
 
+void NPC::SetBehaviorTree(const std::string& treeName)
+{
+	behaviorTree = BehaviorTree::createBehaviorTree(treeName);
+}
+
+void NPC::RunBehaviorTree(Task::BlackboardPtr blackboard)
+{
+	behaviorTree->run(blackboard);
+}
+
 bool NPC::operator<(const NPC& npc) const
 {
 	return uid < npc.uid;

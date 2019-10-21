@@ -11,6 +11,18 @@
 #include <type_traits>
 #include <utility>
 
+class Task;
+struct BehaviorTree : std::unique_ptr<Task>
+{
+	using ClonePtr = Task *;
+	BehaviorTree() = default;
+	BehaviorTree(ClonePtr clone) : std::unique_ptr<Task>(clone) {};
+
+	using BehaviorTreeKey = std::string;
+	static std::unordered_map<BehaviorTreeKey, Task*> behaviorTreeLibrary;
+	static BehaviorTree createBehaviorTree(BehaviorTreeKey key);
+
+};
 
 class Task
 {
@@ -20,6 +32,8 @@ public:
 	using BlackboardPtr = Blackboard<BlackboardKey>*;
 	using ClonePtr = Task*;
 
+	using BehaviorTreeKey = BehaviorTree::BehaviorTreeKey;
+
 	Task() = default;
 	Task(const Task&) = delete;
 	Task& operator= (const Task&) = delete;
@@ -27,14 +41,8 @@ public:
 
 	using ChildPtr = Task*;
 	//using ChildPtr = std::unique_ptr<Task>;
-	using BehaviorTree = Task*;
+	// Task*;
 
-	using BehaviorTreeKey = std::string;
-	static std::unordered_map<BehaviorTreeKey, ClonePtr> behaviorTreeLibrary;
-	static BehaviorTree createBehaviorTree(BehaviorTreeKey key) {
-		//return std::unique_ptr<Task>(behaviorTreeLibrary[key]->clone());
-		return behaviorTreeLibrary[key]->clone();
-	}
 	
 
 
@@ -120,7 +128,7 @@ public:
 	}
 
 	ClonePtr clone() override {
-		return createBehaviorTree(behaviorTreeKey);
+		return BehaviorTree::createBehaviorTree(behaviorTreeKey).release();
 	}
 };
 
@@ -367,7 +375,7 @@ public:
 
 	ReturnValue run(BlackboardPtr blackboard) override {
 		if (!child) {
-			child = createBehaviorTree(subTreeKey);
+			child = BehaviorTree::createBehaviorTree(subTreeKey).release();
 		}
 		return child->run(blackboard);
 	}
