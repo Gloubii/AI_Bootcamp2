@@ -45,6 +45,7 @@ public:
 	Hex getFrom() const;
 	Hex getTo() const;
 	int getCost() const;
+	int getCost(EObjectType& object) const ;
 	std::string toString() const;
 };
 

@@ -42,6 +42,14 @@ void Graph2JsonFile(Graph& graph, std::string filename)
 		Value edgeObj(kObjectType);
 		edgeObj.AddMember("from", Node2Json(nFrom, allocator), allocator);
 		edgeObj.AddMember("to", Node2Json(nTo, allocator), allocator);
+		
+		EObjectType object;
+		if (e.getCost(object)) {
+			edgeObj.AddMember("object", object, allocator);
+		}
+		else {
+			edgeObj.AddMember("object", -1, allocator);
+		}
 
 		edgeList.PushBack(edgeObj, allocator);
 	}

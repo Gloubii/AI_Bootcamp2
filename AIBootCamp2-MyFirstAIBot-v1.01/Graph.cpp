@@ -47,6 +47,15 @@ int Edge::getCost() const
 	return cost;
 }
 
+int Edge::getCost(EObjectType& object_) const
+{
+	int cost = getCost();
+	if (cost == -1) {
+		object_ = object;
+	}
+	return cost;
+}
+
 string Edge::toString() const
 {
 	string out = "";
