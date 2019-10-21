@@ -10,9 +10,6 @@ class NPC
 	int uid, visionRange;
 	Hex position;
 	OrderPath orderPath;
-	Hex currentGoal;
-	bool hasGoal;
-	int currentPathId;
 
 public:
 	
@@ -25,14 +22,6 @@ public:
 	int GetUid() const;
 	int GetVisionRange() const;
 	Hex GetPosition() const;
-	Hex GetCurrentGoal() const;
-	bool HasCurrentGoal() const;
-
-	void SetCurrentPathId(const int &id);
-	int GetCurrentPathId() const;
-
-	void RemoveGoal();
-	void SetGoal(const Hex& hex);
 
 	void BuildOrder(const std::vector<Hex> path);
 	void AddOrder(const SOrder& order);

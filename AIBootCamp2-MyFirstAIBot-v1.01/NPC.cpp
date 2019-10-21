@@ -1,6 +1,6 @@
 #include "NPC.h"
 
-NPC::NPC(const SNPCInfo& npcInfo) : uid{npcInfo.uid}, position{Hex{npcInfo.q, npcInfo.r}}, visionRange{npcInfo.visionRange}, currentGoal{}, hasGoal{false}, currentPathId{-1}
+NPC::NPC(const SNPCInfo& npcInfo) : uid{npcInfo.uid}, position{Hex{npcInfo.q, npcInfo.r}}, visionRange{npcInfo.visionRange}
 {
 
 }
@@ -36,41 +36,6 @@ Hex NPC::GetPosition() const
 	return position;
 }
 
-Hex NPC::GetCurrentGoal() const
-{
-	if (!hasGoal)
-		throw std::exception("Ce NPC n'a pas de goal");
-	return currentGoal;
-}
-
-bool NPC::HasCurrentGoal() const
-{
-	return hasGoal;
-}
-
-void NPC::SetCurrentPathId(const int& id)
-{
-	currentPathId = id;
-}
-
-int NPC::GetCurrentPathId() const
-{
-	if (!hasGoal) {
-		throw ("Ce npc n'a pas de goal !");
-	}
-	return currentPathId;
-}
-
-void NPC::RemoveGoal()
-{
-	hasGoal = false;
-}
-
-void NPC::SetGoal(const Hex& hex)
-{
-	hasGoal = true;
-	currentGoal = hex;
-}
 
 void NPC::BuildOrder(const std::vector<Hex> path)
 {
