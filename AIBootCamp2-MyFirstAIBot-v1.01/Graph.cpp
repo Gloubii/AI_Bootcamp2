@@ -1,5 +1,6 @@
 #include "Graph.h"
 #include <algorithm>
+#include <assert.h>
 
 using namespace std;
 
@@ -74,6 +75,11 @@ string Edge::toString() const
 	return out;
 }
 
+EHexCellDirection Edge::toDirection() const
+{
+	return (hex_to - hex_from).ToDirection();
+}
+
 
 Graph::Graph(const SInitData& initData) : maxRow(initData.rowCount), maxCol(initData.colCount)
 {
@@ -84,6 +90,16 @@ Graph::Graph(const SInitData& initData) : maxRow(initData.rowCount), maxCol(init
 			goals.push_back(Hex{ initData.tileInfoArray[i].q, initData.tileInfoArray[i].r });
 		}
 	}
+	
+	// add unknown nodes
+	for (auto hex : GetHexes()) {
+		for (EHexCellDirection dir : hex.GetNeighboursDirection(maxRow, maxCol)) {
+			auto voisin = hex.GetNeighbour(dir);
+			if (!Contains(voisin)) {
+				nodes.insert_or_assign(voisin, Node());
+			}
+		}
+	}
 
 	// get obstacles
 	std::vector<SObjectInfo> objects;
@@ -91,32 +107,12 @@ Graph::Graph(const SInitData& initData) : maxRow(initData.rowCount), maxCol(init
 		objects.push_back(initData.objectInfoArray[i]);
 	}
 	
-	// add edges and unknown nodes
+	// add edges 
 	for (auto hex : GetHexes()) {
 		for (EHexCellDirection dir : hex.GetNeighboursDirection(maxRow,maxCol)) {
 			auto voisin = hex.GetNeighbour(dir);
-			// edges of normal tiles
-			if (Contains(voisin) && !nodes.at(voisin).isUnknown()) {
-				EObjectType object;
-				auto isWall = [hex, voisin, dir, &object](SObjectInfo objet) {
-					if (!((objet.q == hex.x && objet.r == hex.y && objet.cellPosition == dir) ||
-						(objet.q == voisin.x && objet.r == voisin.y && objet.cellPosition == ((dir + 3) % 6))))
-						return false;
-					object = (EObjectType) objet.types[objet.typesSize-1];
-					return true; };
-				if (find_if(begin(objects), end(objects), isWall) == end(objects)) {
-					if (nodes.at(hex).getTile().type == EHexCellType::Forbidden || nodes.at(voisin).getTile().type == EHexCellType::Forbidden)
-						edges.push_back(Edge(hex, voisin, -2));
-					else
-						edges.push_back(Edge(hex, voisin, 1));
-				}
-				else
-					edges.push_back(Edge(hex, voisin, -1, object));
-			}
-			// unknown tiles
-			else {
-				if (!Contains(voisin))
-					nodes.insert_or_assign(voisin, Node());
+			if (Contains(voisin)) {
+				// edges of normal tiles
 				EObjectType object;
 				auto isWall = [hex, voisin, dir, &object](SObjectInfo objet) {
 					if (!((objet.q == hex.x && objet.r == hex.y && objet.cellPosition == dir) ||
@@ -125,19 +121,15 @@ Graph::Graph(const SInitData& initData) : maxRow(initData.rowCount), maxCol(init
 					object = (EObjectType)objet.types[objet.typesSize - 1];
 					return true; };
 				if (find_if(begin(objects), end(objects), isWall) == end(objects)) {
-					if (nodes.at(hex).getTile().type == EHexCellType::Forbidden) {
+					if (nodes.at(hex).getTile().type == EHexCellType::Forbidden || nodes.at(voisin).getTile().type == EHexCellType::Forbidden)
 						edges.push_back(Edge(hex, voisin, -2));
-						edges.push_back(Edge(voisin, hex, -2));
-					}
-					else {
+					else if (nodes.at(hex).isUnknown() || nodes.at(voisin).isUnknown())
 						edges.push_back(Edge(hex, voisin, -3));
-						edges.push_back(Edge(voisin, hex, -3));
-					}
-				}	
-				else {
-					edges.push_back(Edge(hex, voisin, -1, object));
-					edges.push_back(Edge(voisin, hex, -1, object));
+					else
+						edges.push_back(Edge(hex, voisin, 1));
 				}
+				else
+					edges.push_back(Edge(hex, voisin, -1, object));
 			}
 		}
 	}
@@ -161,86 +153,70 @@ bool Graph::Update(const STurnData& turnData)
 			}
 		}
 		else {
-			Node n = nodes.at(Hex(turnData.tileInfoArray[i].q, turnData.tileInfoArray[i].r));
+			Node& n = nodes.at(Hex(turnData.tileInfoArray[i].q, turnData.tileInfoArray[i].r));
 			if (n.isUnknown()) {
-				n.tile = turnData.tileInfoArray[i];
-				if (turnData.tileInfoArray[i].type == EHexCellType::Goal) {
-					goals.push_back(Hex{ turnData.tileInfoArray[i].q, turnData.tileInfoArray[i].r });
+				nodes.insert_or_assign(Hex{ turnData.tileInfoArray[i].q, turnData.tileInfoArray[i].r }, Node(turnData.tileInfoArray[i]));
+			}
+		}
+	}
+
+	// add unknown nodes
+	for (auto hex : GetHexes()) {
+		if (!nodes.at(hex).isUnknown()) {
+			for (EHexCellDirection dir : hex.GetNeighboursDirection(maxRow, maxCol)) {
+				auto voisin = hex.GetNeighbour(dir);
+				if (!Contains(voisin)) {
+					nodes.insert_or_assign(voisin, Node());
 				}
 			}
 		}
 	}
 
 
+
 	std::vector<SObjectInfo> objects;
 	// get obstacles
-	if (changed.size()) {
-		for (int i = 0; i < turnData.objectInfoArraySize; ++i) {
-			objects.push_back(turnData.objectInfoArray[i]);
-		}
+	for (int i = 0; i < turnData.objectInfoArraySize; ++i) {
+		objects.push_back(turnData.objectInfoArray[i]);
 	}
-	
+
 	// add edges	
 	// TODO : optimiser pour ne pas repasser toute la map
 	// add edges and unknown nodes
+	// add edges 
 	for (auto hex : GetHexes()) {
 		for (EHexCellDirection dir : hex.GetNeighboursDirection(maxRow, maxCol)) {
 			auto voisin = hex.GetNeighbour(dir);
-			// edges of normal tiles
-			if (Contains(voisin) && !nodes.at(voisin).isUnknown()) {
-				EObjectType object;
+			if (Contains(voisin)) {
 				auto isStartEdge = [hex, voisin](Edge e) {return e.getFrom() == hex && e.getTo() == voisin; };
-				auto isEndEdge   = [hex, voisin](Edge e) {return e.getTo() == hex && e.getFrom() == voisin; };
 				auto e1 = find_if(begin(edges), end(edges), isStartEdge);
-				auto e2 = find_if(begin(edges), end(edges), isEndEdge);
-				if (e1._Ptr->cost == -3) {	// On change les valeurs que si le edge était inconnu
+				bool be_edgy = true;
+				if (e1 != end(edges)) {
+					if (e1._Ptr->cost == -3)
+						edges.erase(e1);
+					else {
+						be_edgy = false;
+					}
+				}
+				// edges of normal tiles
+				if (be_edgy) {
+					EObjectType object;
 					auto isWall = [hex, voisin, dir, &object](SObjectInfo objet) {
 						if (!((objet.q == hex.x && objet.r == hex.y && objet.cellPosition == dir) ||
 							(objet.q == voisin.x && objet.r == voisin.y && objet.cellPosition == ((dir + 3) % 6))))
 							return false;
 						object = (EObjectType)objet.types[objet.typesSize - 1];
 						return true; };
-					if (find_if(begin(objects), end(objects), isWall) == end(objects))
-						if (nodes.at(hex).getTile().type == EHexCellType::Forbidden || nodes.at(voisin).getTile().type == EHexCellType::Forbidden) {
-							e1._Ptr->cost = -2;
-							e2._Ptr->cost = -2;
-						}
-						else {
-							e1._Ptr->cost = 1;
-							e2._Ptr->cost = 1;
-						}
-					else {
-						e1._Ptr->cost = -1;
-						e2._Ptr->cost = -1;
-						e1._Ptr->object = object;
-						e2._Ptr->object = object;
+					if (find_if(begin(objects), end(objects), isWall) == end(objects)) {
+						if (nodes.at(hex).getTile().type == EHexCellType::Forbidden || nodes.at(voisin).getTile().type == EHexCellType::Forbidden)
+							edges.push_back(Edge(hex, voisin, -2));
+						else if (nodes.at(hex).isUnknown() || nodes.at(voisin).isUnknown())
+							edges.push_back(Edge(hex, voisin, -3));
+						else
+							edges.push_back(Edge(hex, voisin, 1));
 					}
-				}
-			}
-			// unknown tiles
-			else {
-				if (!Contains(voisin))
-					nodes.insert_or_assign(voisin, Node());
-				EObjectType object;
-				auto isWall = [hex, voisin, dir, &object](SObjectInfo objet) {
-					if (!((objet.q == hex.x && objet.r == hex.y && objet.cellPosition == dir) ||
-						(objet.q == voisin.x && objet.r == voisin.y && objet.cellPosition == ((dir + 3) % 6))))
-						return false;
-					object = (EObjectType)objet.types[objet.typesSize - 1];
-					return true; };
-				if (find_if(begin(objects), end(objects), isWall) == end(objects)) {
-					if (nodes.at(hex).getTile().type == EHexCellType::Forbidden) {
-						edges.push_back(Edge(hex, voisin, -2));
-						edges.push_back(Edge(voisin, hex, -2));
-					}
-					else {
-						edges.push_back(Edge(hex, voisin, -3));
-						edges.push_back(Edge(voisin, hex, -3));
-					}
-				}
-				else {
-					edges.push_back(Edge(hex, voisin, -1, object));
-					edges.push_back(Edge(voisin, hex, -1, object));
+					else
+						edges.push_back(Edge(hex, voisin, -1, object));
 				}
 			}
 		}

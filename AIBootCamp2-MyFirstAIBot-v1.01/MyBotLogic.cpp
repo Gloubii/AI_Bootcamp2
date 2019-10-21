@@ -45,6 +45,14 @@ void MyBotLogic::Init(const SInitData& _initData)
 void MyBotLogic::GetTurnOrders(const STurnData& _turnData, std::list<SOrder>& _orders)
 {
 	BOT_LOGIC_LOG(mLogger, "GetTurnOrders", true);
+	g.Update(_turnData);
+
+	SOrder order;
+	order.direction = E;
+	order.npcUID = _turnData.npcInfoArray->uid;
+	order.orderType = Move;
+
+	_orders.push_back(order);
 
 	//Write Code Here
 }
