@@ -104,17 +104,19 @@ Graph::Graph(const SInitData& initData) : maxRow(initData.rowCount), maxCol(init
 						return false;
 					object = (EObjectType) objet.types[objet.typesSize-1];
 					return true; };
-				if (find_if(begin(objects), end(objects), isWall) == end(objects))
-					if(nodes.at(hex).getTile().type == EHexCellType::Forbidden && nodes.at(voisin).getTile().type == EHexCellType::Forbidden)
+				if (find_if(begin(objects), end(objects), isWall) == end(objects)) {
+					if (nodes.at(hex).getTile().type == EHexCellType::Forbidden || nodes.at(voisin).getTile().type == EHexCellType::Forbidden)
 						edges.push_back(Edge(hex, voisin, -2));
 					else
 						edges.push_back(Edge(hex, voisin, 1));
+				}
 				else
 					edges.push_back(Edge(hex, voisin, -1, object));
 			}
 			// unknown tiles
-			else if (!Contains(voisin)) {
-				nodes.insert_or_assign(voisin, Node());
+			else {
+				if (!Contains(voisin))
+					nodes.insert_or_assign(voisin, Node());
 				EObjectType object;
 				auto isWall = [hex, voisin, dir, &object](SObjectInfo objet) {
 					if (!((objet.q == hex.x && objet.r == hex.y && objet.cellPosition == dir) ||
@@ -122,15 +124,20 @@ Graph::Graph(const SInitData& initData) : maxRow(initData.rowCount), maxCol(init
 						return false;
 					object = (EObjectType)objet.types[objet.typesSize - 1];
 					return true; };
-				if (find_if(begin(objects), end(objects), isWall) == end(objects))
-					if (nodes.at(hex).getTile().type != EHexCellType::Forbidden || nodes.at(voisin).getTile().type != EHexCellType::Forbidden) {
+				if (find_if(begin(objects), end(objects), isWall) == end(objects)) {
+					if (nodes.at(hex).getTile().type == EHexCellType::Forbidden) {
+						edges.push_back(Edge(hex, voisin, -2));
+						edges.push_back(Edge(voisin, hex, -2));
+					}
+					else {
 						edges.push_back(Edge(hex, voisin, -3));
 						edges.push_back(Edge(voisin, hex, -3));
 					}
-					else {
-						edges.push_back(Edge(hex, voisin, -1, object));
-						edges.push_back(Edge(voisin, hex, -1, object));
-					}
+				}	
+				else {
+					edges.push_back(Edge(hex, voisin, -1, object));
+					edges.push_back(Edge(voisin, hex, -1, object));
+				}
 			}
 		}
 	}
