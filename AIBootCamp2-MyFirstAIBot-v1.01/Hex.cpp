@@ -92,7 +92,7 @@ std::vector<EHexCellDirection> Hex::GetNeighboursDirection(int maxQ, int maxR) c
 	}
 	else if (pos == (maxR - 1)) {
 		neighbours.push_back(EHexCellDirection::W);
-		if (xImpair) {
+		if (!xImpair) {
 			neighbours.push_back(EHexCellDirection::NW);
 			neighbours.push_back(EHexCellDirection::SW);
 			neighbours.push_back(EHexCellDirection::NE);
@@ -130,17 +130,17 @@ EHexCellDirection Hex::ToDirection() const
 
 Hex Hex::operator+(const Hex& hex) const
 {
-	return Hex{x + hex.x, y + hex.y, z + hex.z};
+	return Hex{x + hex.x, y + hex.y};
 }
 
 Hex Hex::operator-(const Hex& hex) const
 {
-	return Hex{x - hex.x, y - hex.y, z - hex.z};
+	return Hex{x - hex.x, y - hex.y};
 }
 
 bool Hex::operator==(const Hex& hex) const
 {
-	return x == hex.x && y == hex.y && z == hex.z;
+	return x == hex.x && y == hex.y;
 }
 
 bool Hex::operator!=(const Hex& hex) const
@@ -154,7 +154,7 @@ bool Hex::operator<(const Hex& hex) const
 		return x < hex.x;
 	if (y != hex.y)
 		return y < hex.y;
-	return z < hex.z;
+	return false;
 }
 
 std::string Hex::toString() const

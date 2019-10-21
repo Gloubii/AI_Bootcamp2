@@ -13,6 +13,8 @@ string Node::toString() const
 	out.append(to_string(getTile().q));
 	out.append("	R= ");
 	out.append(to_string(getTile().r));
+	if (unknown)
+		out.append(" case inconnue");
 	out.append("\n");
 	return out;
 }
@@ -60,10 +62,10 @@ string Edge::toString() const
 			out.append("mur entre ");
 		else if (object == EObjectType::Window)
 			out.append("fenetre entre ");
-		else
+		else {
 			out.append(to_string(object));
 			out.append("inconnue entre ");
-
+		}
 	}
 	out.append(hex_from.toString());
 	out.append(" et ");
@@ -111,7 +113,7 @@ Graph::Graph(const SInitData& initData) : maxRow(initData.rowCount), maxCol(init
 					edges.push_back(Edge(hex, voisin, -1, object));
 			}
 			// unknown tiles
-			else {
+			else if (!Contains(voisin)) {
 				nodes.insert_or_assign(voisin, Node());
 				EObjectType object;
 				auto isWall = [hex, voisin, dir, &object](SObjectInfo objet) {
@@ -465,6 +467,8 @@ string Graph::toString() const
 	out.append("\n");
 	auto afficheNode = [&out](std::pair<Hex,Node> p)
 	{
+		out.append(p.first.toString());
+		out.append(":     ");
 		out.append(p.second.toString());
 	};
 	for_each(begin(nodes), end(nodes), afficheNode);
