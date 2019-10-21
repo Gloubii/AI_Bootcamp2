@@ -9,6 +9,7 @@
 #include <condition_variable>
 #include <mutex>
 #include <type_traits>
+#include <utility>
 
 
 class Task
@@ -39,7 +40,7 @@ public:
 
 public:
 	virtual ReturnValue run(BlackboardPtr) = 0;
-	virtual ClonePtr clone() const = 0;
+	virtual ClonePtr clone() = 0;
 	virtual void terminate() {};
 
 	virtual ~Task() = default;
@@ -118,7 +119,7 @@ public:
 		throw std::exception("This task can't be run");
 	}
 
-	ClonePtr clone() const override {
+	ClonePtr clone() override {
 		return createBehaviorTree(behaviorTreeKey);
 	}
 };
@@ -149,7 +150,7 @@ public:
 		return res;
 	}
 
-	ClonePtr clone() const override {
+	ClonePtr clone() override {
 		std::vector<ChildPtr> childCopy;
 		std::for_each(begin(children), end(children), [&childCopy](auto child) {childCopy.push_back(child->clone()); });
 		return new TaskSelequence<Test>(childCopy);
@@ -253,7 +254,7 @@ public:
 		}
 	}
 	
-	ClonePtr clone() const override {
+	ClonePtr clone() override {
 		std::vector<ChildPtr> childCopy;
 		std::for_each(begin(children), end(children), [&childCopy](auto child) {childCopy.push_back(child->clone()); });
 		return new TaskParallel(childCopy);
@@ -281,7 +282,7 @@ public:
 		return FAILLURE;
 	}
 
-	virtual ClonePtr clone() const override {
+	virtual ClonePtr clone() override {
 		return new TaskLimit(child->clone(), runLimit);
 	}
 };
@@ -298,7 +299,7 @@ public:
 		return res == RUNNING ? RUNNING : SUCCESS;
 	}
 
-	ClonePtr clone() const override {
+	ClonePtr clone() override {
 		return new TaskUntilFail{ child->clone() };
 	}
 };
@@ -314,7 +315,7 @@ public:
 		return !child->run(blackboard);
 	}
 
-	ClonePtr clone() const override {
+	ClonePtr clone() override {
 		return new TaskInverter{ child->clone() };
 	}
 };
@@ -331,7 +332,7 @@ public:
 		return Return;
 	}
 
-	ClonePtr clone() const override {
+	ClonePtr clone() override {
 		return new TaskReturnValue<Return>{ child->clone() };
 	}
 };
@@ -352,7 +353,7 @@ public:
 		return res;
 	}
 
-	ClonePtr clone() const override {
+	ClonePtr clone() override {
 		return new TaskCreateBlackboard{ child->clone() };
 	}
 };
@@ -371,17 +372,25 @@ public:
 		return child->run(blackboard);
 	}
 
-	ClonePtr clone() const {
+	ClonePtr clone() override {
 		return new TaskCreateSubTree(subTreeKey);
 	}
 };
 
+class TaskPerformInterruption;
+
 class TaskInterrupter : public TaskDecorator {
-	bool done;
+	bool done = false;
 	std::condition_variable cv;
 	std::mutex mutex;
-	ReturnValue result;
+	ReturnValue result = FAILLURE;
+
+	using InteruptPerformer = TaskPerformInterruption *;
+
+	TaskInterrupter* lastCloned;
+	std::vector<InteruptPerformer> clonedPerformers;
 	
+	friend class TaskPerformInterruption;
 
 
 	void runChild(ChildPtr child, BlackboardPtr blackboard) {
@@ -396,7 +405,7 @@ class TaskInterrupter : public TaskDecorator {
 
 public:
 
-	TaskInterrupter(ChildPtr child) : TaskDecorator{ child } {}
+	TaskInterrupter(ChildPtr child) : TaskDecorator{ child }, clonedPerformers{} {}
 
 	ReturnValue run(BlackboardPtr blackboard) override {
 		done = false;
@@ -410,6 +419,13 @@ public:
 		return result;
 	}
 
+	
+
+	ClonePtr clone() override;
+
+
+private:
+
 	void setResult(const ReturnValue& desiredResult) {
 		{
 			std::lock_guard<std::mutex> lk(mutex);
@@ -420,25 +436,44 @@ public:
 		cv.notify_one();
 	}
 
-	ClonePtr clone() const {
-		return new TaskInterrupter(child);
+	void addClonedPerformer(InteruptPerformer performer) {
+		clonedPerformers.push_back(performer);
 	}
 };
 
 class TaskPerformInterruption : public Task {
 	TaskInterrupter* interrupter;
+	TaskInterrupter* clonedInterrupter;
 	const ReturnValue desiredResult;
 
+	friend class TaskInterrupter;
+
+	void setInterupter(TaskInterrupter* interrupter) {
+		this->interrupter = interrupter;
+	}
+
 public:
-	TaskPerformInterruption(TaskInterrupter* interrupter, const ReturnValue& desiredResult) : interrupter{ interrupter }, desiredResult{ desiredResult } {}
+	TaskPerformInterruption(TaskInterrupter* interrupter, const ReturnValue& desiredResult) : interrupter{ interrupter }, desiredResult{ desiredResult } {
+	}
 
 	ReturnValue run(BlackboardPtr blackboard) override {
 		interrupter->setResult(desiredResult);
 		return SUCCESS;
 	}
 
-	ClonePtr clone() const {
-		return new TaskPerformInterruption(interrupter, desiredResult);
+	ClonePtr clone() override {
+		
+		if (clonedInterrupter != interrupter->lastCloned) {
+			auto clone = new TaskPerformInterruption(interrupter->lastCloned, desiredResult);
+			clonedInterrupter = interrupter->lastCloned;
+			return clone;
+		}
+		else
+		{
+			auto clone = new TaskPerformInterruption(nullptr, desiredResult);
+			interrupter->addClonedPerformer(clone);
+			return clone;
+		}
 	}
 };
 
@@ -461,7 +496,7 @@ public:
 		}
 	}
 
-	ClonePtr clone() const override {
+	ClonePtr clone() override {
 		return new TaskPredicate(pred);
 	}
 };

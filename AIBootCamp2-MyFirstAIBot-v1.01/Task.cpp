@@ -19,3 +19,13 @@ Task::ReturnValue operator! (Task::ReturnValue res) {
 	}
 	return res;
 }
+
+Task::ClonePtr TaskInterrupter::clone() {
+	auto clone = new TaskInterrupter(child->clone());
+	std::for_each(begin(clonedPerformers), end(clonedPerformers), [&clone](InteruptPerformer p) {
+		p->setInterupter(clone);
+		});
+	lastCloned = clone;
+	clonedPerformers.clear();
+	return clone;
+}
