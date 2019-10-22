@@ -1,4 +1,5 @@
 #include "Task.h"
+#include "NPC.h"
 
 std::unordered_map<BehaviorTree::BehaviorTreeKey, BehaviorTree::ClonePtr> BehaviorTree::behaviorTreeLibrary;
 
@@ -34,3 +35,25 @@ BehaviorTree BehaviorTree::createBehaviorTree(BehaviorTreeKey key)
 {
 	return BehaviorTree{ behaviorTreeLibrary[key]->clone() };
 }
+
+void BehaviorTree::initBehaviorTree()
+{
+	behaviorTreeLibrary["NpcBasicTree"] = new TaskSequence({
+		new TaskInverter{ new TaskSelector{{
+				new TaskSequence {{
+					new NPC::TaskPathEmpty, 
+					new TaskPredicate{[](Task::BlackboardPtr b) {return b->getValue<Hex>("goal") == b->getValue<Hex>("currentPos"); }}, 
+					new NPC::TaskWait
+				}},
+				new TaskFaillure{ new NPC::TaskGetPath}
+		}}},
+		new TaskSequence{{
+				new TaskInverter{ new TaskSequence {{
+						new NPC::TaskNextBlocked, new NPC::TaskWait
+				}}},
+				new NPC::TaskMove
+		}}
+	});
+}
+
+

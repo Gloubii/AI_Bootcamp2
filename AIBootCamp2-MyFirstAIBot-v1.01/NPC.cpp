@@ -1,6 +1,7 @@
 #include "NPC.h"
+#include "Manager.h"
 
-NPC::NPC(const SNPCInfo& npcInfo) : uid{npcInfo.uid}, position{Hex{npcInfo.q, npcInfo.r}}, visionRange{npcInfo.visionRange}
+NPC::NPC(Manager_t *manager, const SNPCInfo& npcInfo, Graph& graph) : manager{ manager }, uid { npcInfo.uid }, position{ Hex{npcInfo.q, npcInfo.r} }, visionRange{ npcInfo.visionRange }, graph{ graph }, blackboard{new Blackboard<Task::BlackboardKey>}
 {
 
 }
@@ -34,6 +35,21 @@ int NPC::GetVisionRange() const
 Hex NPC::GetPosition() const
 {
 	return position;
+}
+
+void NPC::SetPosition(const Hex& hex)
+{
+	position = hex;
+}
+
+void NPC::SetGoal(const Hex& hex)
+{
+	goal = hex;
+}
+
+Hex NPC::GetGoal()
+{
+	return goal;
 }
 
 
@@ -74,7 +90,18 @@ void NPC::SetBehaviorTree(const std::string& treeName)
 	behaviorTree = BehaviorTree::createBehaviorTree(treeName);
 }
 
-void NPC::RunBehaviorTree(Task::BlackboardPtr blackboard)
+void NPC::SetUpBlackboard()
+{
+	blackboard->clean();
+	blackboard->write("npc", this);
+	blackboard->write("path", &path);
+	blackboard->write("manager", manager);
+	blackboard->write("graph", &graph);
+	blackboard->write("currentPos", position);
+	blackboard->write("goal", goal);
+}
+
+void NPC::RunBehaviorTree()
 {
 	behaviorTree->run(blackboard);
 }
@@ -84,3 +111,11 @@ bool NPC::operator<(const NPC& npc) const
 	return uid < npc.uid;
 }
 
+
+
+Task::ReturnValue NPC::TaskNextBlocked::run(BlackboardPtr blackboard)
+{
+	auto e = blackboard->getValue<Path_t*>("path")->front();
+	auto m = blackboard->getValue<Manager_t*>("manager");
+	return m->isOccuped(e.getTo()) ? SUCCESS : FAILLURE;
+}

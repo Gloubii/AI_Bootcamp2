@@ -37,14 +37,46 @@ void MyBotLogic::Init(const SInitData& _initData)
 	BOT_LOGIC_LOG(mLogger, "Init", true);
 	BOT_LOGIC_LOG(mLogger, std::to_string(_initData.objectInfoArraySize), true);
 
+	BehaviorTree::initBehaviorTree();
+
 	//Create graph
 	g = Graph(_initData);
+
+	for (int i = 0; i < _initData.nbNPCs; ++i) {
+		manager.npcs.push_back(NPC{&manager,_initData.npcInfoArray[i], g});
+	}
+
+	manager.createBasicbehaviorTree();
+	BOT_LOGIC_LOG(mLogger, "BehaviorTree created", true);
+
+	if (_initData.omniscient) {
+		BOT_LOGIC_LOG(mLogger, "omniscient", true);
+		auto goals = g.GetGoals();
+		for (NPC &npc : manager.npcs) {
+			auto nearest = std::min_element(goals.cbegin(), goals.cend(), [start = npc.GetPosition()](const Hex& g1, const Hex& g2) {return g1.DistanceTo(start) < g2.DistanceTo(start);});
+			npc.SetGoal(*nearest);
+			goals.erase(nearest);
+		}
+	}
+
 	BOT_LOGIC_LOG(mLogger, g.toString(), true);
 }
 
 void MyBotLogic::GetTurnOrders(const STurnData& _turnData, std::list<SOrder>& _orders)
 {
 	BOT_LOGIC_LOG(mLogger, "GetTurnOrders", true);
-
+	g.Update(_turnData);
+	manager.updateNpc(_turnData);
+	BOT_LOGIC_LOG(mLogger, "Updated graph", true);
+	for (NPC& npc : manager.npcs) {
+		npc.SetUpBlackboard();
+		BOT_LOGIC_LOG(mLogger, "Setup Blackboard", true);
+		npc.RunBehaviorTree();
+		BOT_LOGIC_LOG(mLogger, "Run behavior Tree", true);
+		_orders.push_back(npc.NextOrder());
+		BOT_LOGIC_LOG(mLogger, "push back order", true);
+	}
 	//Write Code Here
 }
+
+
