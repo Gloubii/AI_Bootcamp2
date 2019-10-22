@@ -92,20 +92,20 @@ std::vector<EHexCellDirection> Hex::GetNeighboursDirection(int maxQ, int maxR) c
 	}
 	else if (pos == (maxR - 1)) {
 		neighbours.push_back(EHexCellDirection::W);
+		neighbours.push_back(EHexCellDirection::NW);
+		neighbours.push_back(EHexCellDirection::SW);
 		if (!xImpair) {
-			neighbours.push_back(EHexCellDirection::NW);
-			neighbours.push_back(EHexCellDirection::SW);
 			neighbours.push_back(EHexCellDirection::NE);
 			neighbours.push_back(EHexCellDirection::SE);
 		}
 	}
 	else if (pos == 0) {
 		neighbours.push_back(EHexCellDirection::E);
+		neighbours.push_back(EHexCellDirection::NE);
+		neighbours.push_back(EHexCellDirection::SE);
 		if (xImpair) {
 			neighbours.push_back(EHexCellDirection::NW);
 			neighbours.push_back(EHexCellDirection::SW);
-			neighbours.push_back(EHexCellDirection::NE);
-			neighbours.push_back(EHexCellDirection::SE);
 		}
 	}
 	else {

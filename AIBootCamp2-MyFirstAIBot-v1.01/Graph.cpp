@@ -209,14 +209,14 @@ bool Graph::Update(const STurnData& turnData)
 						return true; };
 					if (find_if(begin(objects), end(objects), isWall) == end(objects)) {
 						if (nodes.at(hex).getTile().type == EHexCellType::Forbidden || nodes.at(voisin).getTile().type == EHexCellType::Forbidden)
-							edges.push_back(Edge(hex, voisin, -2));
+							edges.push_back(Edge(hex, voisin, -2));		// Connection to/from a red tile
 						else if (nodes.at(hex).isUnknown() || nodes.at(voisin).isUnknown())
-							edges.push_back(Edge(hex, voisin, -3));
+							edges.push_back(Edge(hex, voisin, -3));		// Connection to/from an unknown tile
 						else
-							edges.push_back(Edge(hex, voisin, 1));
+							edges.push_back(Edge(hex, voisin, 1));		// Normal connection used by the pathfinding
 					}
 					else
-						edges.push_back(Edge(hex, voisin, -1, object));
+						edges.push_back(Edge(hex, voisin, -1, object));	// Connection with an object between the two tiles.
 				}
 			}
 		}
@@ -338,13 +338,13 @@ vector<Edge> Graph::aStar(const Hex& start, const Hex& finish) const
 
 		// Loop throught each connection in turn
 		for (Edge e : connections) {
-			//Node endNode = nodes.at(e.hex_to);
+			Hex endNode = e.hex_to;
 			int endNodeCost = current.costSoFar + e.cost;
 			NodeRecord endNodeRecord;
 			int endNodeHeuristic;
 
 			// if the node is closed we may have to skip, or remove it from the closed list
-			auto isEndNode = [e](NodeRecord nr) {return nr.hex_node == e.getTo(); };
+			auto isEndNode = [endNode](NodeRecord nr) {return nr.hex_node == endNode; };
 			if (any_of(begin(closed), end(closed), isEndNode)) {
 				// here we find the record in the closed list corresponding to the node
 				auto ptr_endNodeRecord = find_if(begin(closed), end(closed), isEndNode);
@@ -371,9 +371,8 @@ vector<Edge> Graph::aStar(const Hex& start, const Hex& finish) const
 				endNodeHeuristic = endNodeRecord.estimatedTotalCost - endNodeRecord.costSoFar;
 			}
 			else {
-				//endNodeRecord.node = endNode;
-				endNodeRecord.hex_node = e.hex_to;
-				endNodeHeuristic = e.hex_to.DistanceTo(finish);
+				endNodeRecord.hex_node = endNode;
+				endNodeHeuristic = endNode.DistanceTo(finish);
 			}
 
 			// we're here if we need to update the node. Update the cost, estimate ans connection
