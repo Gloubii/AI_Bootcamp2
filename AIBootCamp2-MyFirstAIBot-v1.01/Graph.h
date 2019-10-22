@@ -50,6 +50,7 @@ public:
 	Hex getTo() const;
 	int getCost() const;
 	std::string toString() const;
+	EHexCellDirection toDirection() const;
 };
 
 
