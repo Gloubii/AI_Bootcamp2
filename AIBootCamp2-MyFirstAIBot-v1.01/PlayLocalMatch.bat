@@ -18,8 +18,8 @@ rem in s, -1 = default
 set ConnectToProcessDelay=-1
 
 rem in ms, -1 = default
-set InitTime=-1
-set TurnTime=-1
+set InitTime=100202
+set TurnTime=8800000
 
 rem <=================================================
 

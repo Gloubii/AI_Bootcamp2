@@ -13,18 +13,27 @@ class NPC
 {
 	int uid, visionRange;
 	Hex position;
+
 	Hex goal;
+	std::vector<Hex> pastGoals;
+	
 	OrderPath orderPath;
 	BehaviorTree behaviorTree;
 
 	Graph &graph;
 
-	
+public:
 	using Manager_t = Manager;
 	using Path_t = std::vector<Edge>;
+
+private:
+
 	Path_t path;
 
+	bool moved;
+
 	Task::BlackboardPtr blackboard;
+
 
 public:
 
@@ -40,8 +49,14 @@ public:
 	Hex GetPosition() const;
 	void SetPosition(const Hex& hex);
 
+	Hex GetIntention() const;
+	bool IsOnGoal() const;
+
 	void SetGoal(const Hex& hex);
-	Hex GetGoal();
+	Hex GetGoal() const;
+	void AskNewGoal();
+
+	std::vector<Hex> GetPastGoals() const;
 
 	void BuildOrder(const std::vector<Hex> path);
 	void AddOrder(const SOrder& order);
@@ -99,6 +114,7 @@ public:
 			order.orderType = EOrderType::Move;
 			order.npcUID = npc->GetUid();
 			npc->AddOrder(order);
+			npc->moved = true;
 			return SUCCESS;
 		}
 
@@ -113,13 +129,14 @@ public:
 			auto npc = blackboard->getValue<NPC*>("npc");
 			auto p = blackboard->getValue<Path_t*>("path");
 			auto e = (*p)[0];
-			p->erase(begin(*p));
+			p->erase(std::begin(*p));
 			SOrder order;
 			order.direction = (e.getTo() - e.getFrom()).ToDirection();
 			order.orderType = EOrderType::Move;
 			order.npcUID = npc->GetUid();
 			npc->AddOrder(order);
 			npc->SetPosition(e.getTo());
+			npc->moved = true;
 			return SUCCESS;
 		}
 

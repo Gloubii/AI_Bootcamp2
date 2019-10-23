@@ -42,14 +42,36 @@ void NPC::SetPosition(const Hex& hex)
 	position = hex;
 }
 
+Hex NPC::GetIntention() const
+{
+	if (moved) return GetPosition();
+	return path.size() ? path.front().getTo() : GetPosition();
+}
+
+bool NPC::IsOnGoal() const
+{
+	return GetPosition() == GetGoal();
+}
+
 void NPC::SetGoal(const Hex& hex)
 {
+	pastGoals.push_back(hex);
 	goal = hex;
 }
 
-Hex NPC::GetGoal()
+Hex NPC::GetGoal() const
 {
 	return goal;
+}
+
+void NPC::AskNewGoal()
+{
+	manager->getNewGoal(this);
+}
+
+std::vector<Hex> NPC::GetPastGoals() const
+{
+	return pastGoals;
 }
 
 
@@ -99,6 +121,7 @@ void NPC::SetUpBlackboard()
 	blackboard->write("graph", &graph);
 	blackboard->write("currentPos", position);
 	blackboard->write("goal", goal);
+	moved = false;
 }
 
 void NPC::RunBehaviorTree()
@@ -111,11 +134,11 @@ bool NPC::operator<(const NPC& npc) const
 	return uid < npc.uid;
 }
 
-
-
 Task::ReturnValue NPC::TaskNextBlocked::run(BlackboardPtr blackboard)
 {
 	auto e = blackboard->getValue<Path_t*>("path")->front();
 	auto m = blackboard->getValue<Manager_t*>("manager");
-	return m->isOccuped(e.getTo()) ? SUCCESS : FAILLURE;
+	auto other = m->getOccupant(e.getTo());
+	if (other) blackboard->write("other", other);
+	return other ? SUCCESS : FAILLURE;
 }

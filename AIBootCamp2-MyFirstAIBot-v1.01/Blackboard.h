@@ -23,8 +23,8 @@ public:
 	//Overwrite the value if it already exist
 	template<class ValueType>
 	void write(const Key& key, const ValueType &value) {
+		if (contain(key)) delete map[key]; 
 		map[key] = new ValueType(value);
-		//map.insert({ key, new ValueType(value) });
 	}
 
 	class KeyNotFound {};
@@ -33,6 +33,7 @@ public:
 	template<class ValueType>
 	void overwrite(const Key& key, const ValueType& value) {
 		if (contain(key)) {
+			delete map[key];
 			map[key] = new ValueType(value);
 			return;
 		}

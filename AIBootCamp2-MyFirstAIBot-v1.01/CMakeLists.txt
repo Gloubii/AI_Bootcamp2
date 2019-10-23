@@ -40,6 +40,7 @@ SET( AIBOT_HEADERS
 	NPC.h
 	OrderPath.h
 	Blackboard.h
+	Manager.h
 	
 	#Trystan
 	Graph.h
@@ -62,6 +63,7 @@ SET( AIBOT_SRC
 	Task.cpp
 	NPC.cpp
 	OrderPath.cpp
+	Manager.cpp
 	
 	#Trystan
 	Graph.cpp

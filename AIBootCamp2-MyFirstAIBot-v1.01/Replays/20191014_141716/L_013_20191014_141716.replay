@@ -1,6 +1,0 @@
-{ 
-"sceneName": "L_013",
-"log": "L_013_20191014_141716.replay",
-"team": "MOI",
-  "turnsData": [{"orders":[]},{"orders":[]},{"orders":[]},{"orders":[]},{"orders":[]},{"orders":[]}],
-  "resultData":{"hasWin":false,"resultPayload":"Reached Max Nb Of Turns"}}
