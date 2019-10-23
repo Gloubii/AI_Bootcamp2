@@ -8,7 +8,19 @@
 #include "./../Graph.h"
 
 
-void Graph2JsonFile(Graph& graph, std::string filename = "./OutilDebugLogs/graph2json.json");
-rapidjson::Value Node2Json(Node& node, rapidjson::MemoryPoolAllocator<>& allocator);
+std::string const QtCreatorPath = "E:/AI_Bootcamp/Iteration2/IAMapCreator/Maps/";
 
-//Graph Json2Graph(std::string filename);
+
+class GraphParser {
+public:
+	GraphParser(Graph& graph);
+	void WriteJson(std::string filename = "./OutilDebugLogs/graph2json.json");
+
+private:
+	rapidjson::Value Graph2Json();
+	rapidjson::Value Node2Json(const Hex& h);
+	rapidjson::Value Edge2Json(const Edge& e);
+
+	Graph& graph;
+	rapidjson::Document d;
+};
