@@ -489,7 +489,6 @@ public:
 template<class Predicate>
 class TaskPredicate : public TaskCondition {
 	Predicate pred;
-	BlackboardPtr blackboard;
 
 public:
 	TaskPredicate(Predicate predicate) : pred{ predicate } {}
@@ -509,5 +508,25 @@ public:
 	}
 };
 
+// Actions
+template<class Run>
+class TaskBasicAction : public TaskAction
+{
+	Run runable;
+public:
+	TaskBasicAction(Run run) : runable{ run } {};
+
+	ReturnValue run(BlackboardPtr blackboard) override {
+		if constexpr (std::is_invocable<Run, BlackboardPtr>::value) 
+			runable(blackboard);
+		else
+			runable();
+		return SUCCESS;
+	}
+
+	ClonePtr clone() override {
+		return new TaskBasicAction(runable);
+	}
+};
 
 #endif

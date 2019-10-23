@@ -51,12 +51,8 @@ void MyBotLogic::Init(const SInitData& _initData)
 
 	if (_initData.omniscient) {
 		BOT_LOGIC_LOG(mLogger, "omniscient", true);
-		auto goals = g.GetGoals();
-		for (NPC &npc : manager.npcs) {
-			auto nearest = std::min_element(goals.cbegin(), goals.cend(), [start = npc.GetPosition()](const Hex& g1, const Hex& g2) {return g1.DistanceTo(start) < g2.DistanceTo(start);});
-			npc.SetGoal(*nearest);
-			goals.erase(nearest);
-		}
+		manager.goals = g.GetGoals();
+		manager.assignGoals();
 	}
 
 	BOT_LOGIC_LOG(mLogger, g.toString(), true);
