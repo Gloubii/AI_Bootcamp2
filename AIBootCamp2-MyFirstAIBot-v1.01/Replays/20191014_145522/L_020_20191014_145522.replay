@@ -1,0 +1,6 @@
+{ 
+"sceneName": "L_020",
+"log": "L_020_20191014_145522.replay",
+"team": "MOI",
+  "turnsData": [{"orders":[]},{"orders":[]}],
+  "resultData":{"hasWin":false,"resultPayload":"Reached Max Nb Of Turns"}}

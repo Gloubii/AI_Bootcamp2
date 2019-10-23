@@ -35,6 +35,12 @@ SET( AIBOT_HEADERS
 	MyBotLogic.h	
 	TurnData.h
 
+	#Leo
+	Task.h
+	NPC.h
+	OrderPath.h
+	Blackboard.h
+	
 	#Trystan
 	Graph.h
 	Hex.h
@@ -52,6 +58,11 @@ SET( AIBOT_SRC
 	Logger.cpp
 	MyBotLogic.cpp
 
+	#Leo
+	Task.cpp
+	NPC.cpp
+	OrderPath.cpp
+	
 	#Trystan
 	Graph.cpp
 	Hex.cpp

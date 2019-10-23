@@ -10,10 +10,13 @@
     <ClCompile Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\MyBotLogic.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\Graph.cpp">
+    <ClCompile Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\Task.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\Hex.cpp">
+    <ClCompile Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\NPC.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\OrderPath.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\dllmain.cpp">
@@ -25,11 +28,11 @@
     <ClCompile Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\stdafx.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="OutilDebug\IOGraphe.cpp">
-      <Filter>Sources\OutilDebug</Filter>
+    <ClCompile Include="Hex.cpp">
+      <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="OutilDebug\TestGraphe.cpp">
-      <Filter>Sources\OutilDebug</Filter>
+    <ClCompile Include="Graph.cpp">
+      <Filter>Sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -57,10 +60,16 @@
     <ClInclude Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\TurnData.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\Graph.h">
+    <ClInclude Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\Task.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\Hex.h">
+    <ClInclude Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\NPC.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\OrderPath.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\Blackboard.h">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\Interop_API.h">
@@ -72,11 +81,11 @@
     <ClInclude Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\targetver.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="OutilDebug\IOGraphe.h">
-      <Filter>Headers\OutilDebug</Filter>
+    <ClInclude Include="Hex.h">
+      <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="OutilDebug\TestGraphe.h">
-      <Filter>Headers\OutilDebug</Filter>
+    <ClInclude Include="Graph.h">
+      <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

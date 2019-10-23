@@ -2,6 +2,8 @@
 
 #include "BotLogicIF.h"
 #include "Logger.h"
+#include "Manager.h"
+#include <vector>
 
 #ifdef _DEBUG
 #define BOT_LOGIC_DEBUG
@@ -28,6 +30,11 @@ public:
 	virtual void Init(const SInitData& _initData);
 	virtual void GetTurnOrders(const STurnData& _turnData, std::list<SOrder>& _orders);
 
+	
+
 protected:
 	Logger mLogger;
+	Manager manager;
+
+
 };

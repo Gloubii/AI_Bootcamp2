@@ -51,6 +51,7 @@ public:
 	int getCost() const;
 	int getCost(EObjectType& object) const ;
 	std::string toString() const;
+	EHexCellDirection toDirection() const;
 };
 
 
@@ -80,7 +81,9 @@ public:
 	Node getNode(const Hex& hex) const;
 	std::vector<Hex> GetHexes() const;
 	std::vector<Hex> GetGoals() const;
+	// Get connections used by the pathfinding
 	std::vector<Edge> getConnections(const Hex& n) const;
+	// Get all connections including walls ans connections to red 
 	std::vector<Edge> getAllConnections(const Hex& n) const;
 	EHexCellDirection getDirection(const Edge& e) const;
 	std::vector<Node> getNeighbours(const Hex& hex) const;
