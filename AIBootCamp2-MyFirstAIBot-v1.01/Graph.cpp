@@ -308,12 +308,14 @@ float Graph::updateValue(const Hex& n) const
 
 vector<Edge> Graph::aStar(const Hex& start, const Hex& finish) const
 {
+	auto heuristic = [](Hex h1, Hex h2) {/*return std::sqrt((h1.x-h2.x)* (h1.x - h2.x) + (h1.y - h2.y) * (h1.y - h2.y) + (h1.x - h2.x) * (h1.y - h2.y));*/
+		return (std::abs(h1.x - h2.x) + std::abs(h1.y - h2.y) + std::abs(h1.z - h2.z)) / 3.1451f; };
 	// Initialize the record for the start node
 	NodeRecord startRecord;
 	//startRecord.node = nodes.at(start);
 	startRecord.hex_node = start;
 	startRecord.costSoFar = 0;
-	startRecord.estimatedTotalCost = start.DistanceTo(finish);
+	startRecord.estimatedTotalCost = heuristic(start,finish);
 
 	// Initialize the open and closed list
 	vector<NodeRecord> open;
@@ -372,7 +374,7 @@ vector<Edge> Graph::aStar(const Hex& start, const Hex& finish) const
 			}
 			else {
 				endNodeRecord.hex_node = endNode;
-				endNodeHeuristic = endNode.DistanceTo(finish);
+				endNodeHeuristic = heuristic(endNode, finish);
 			}
 
 			// we're here if we need to update the node. Update the cost, estimate ans connection
