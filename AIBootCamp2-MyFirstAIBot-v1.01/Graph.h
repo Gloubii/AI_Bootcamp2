@@ -6,6 +6,7 @@
 #include <string>
 #include <unordered_map>
 #include "Hex.h"
+#include <set>
 
 class NodeData
 {
@@ -48,7 +49,7 @@ public:
 
 	Hex getFrom() const;
 	Hex getTo() const;
-	int getCost() const;
+	float getCost() const;
 	std::string toString() const;
 	EHexCellDirection toDirection() const;
 };
@@ -89,8 +90,9 @@ public:
 	std::vector<Node> getNodes() const;
 	bool connected(Hex n1, Hex n2, bool allConnection) const;
 	float updateValue(const Hex& n) const;
+	std::string afficheConvexes() const;
 
-	std::vector<Edge> aStar(const Hex& start, const Hex& finish) const;
+	std::vector<Edge> aStar(const Hex& start, const Hex& finish, const bool exploration = false) const;
 
 	std::string toString() const;
 
@@ -99,7 +101,12 @@ private:
 	std::unordered_map<Hex, Node> nodes;
 	std::vector<Edge> edges;
 	std::vector<Hex> goals;
+	std::vector<std::set<Hex>> convexes;
 	int maxRow;
 	int maxCol;
+
+	void creerConvexes();
+	void addToConvexes(const Hex& start, const Hex& finish);
+	void addToConvexes(const Hex& hex);
 };
 
