@@ -48,7 +48,7 @@ Hex Edge::getTo() const
 	return hex_to;
 }
 
-int Edge::getCost() const
+float Edge::getCost() const
 {
 	return cost;
 }
@@ -285,8 +285,8 @@ std::vector<Node> Graph::getNodes() const
 
 float Graph::updateValue(const Hex& n) const
 {
-	if (nodes.at(n).isUnknown())
-		return 6;							// TODO : 6 or 0 ?
+	//if (nodes.at(n).isUnknown())
+	//	return 6;							// TODO : 6 or 0 ?
 	// interêt, désinterêt, abscence d'info
 	std::vector<Edge> connections = getAllConnections(n);
 	int nbBorder = n.NbBorder(maxRow, maxCol);
@@ -294,7 +294,7 @@ float Graph::updateValue(const Hex& n) const
 	int nbWindow = 0;
 	int nbWall = 0;
 	for (auto e : connections) {
-		if (e.cost != -1)
+		if (e.cost != -1 && e.cost != -3)
 			++nbKnown;
 		else if (e.object == EObjectType::Window)
 			++nbWindow;
@@ -302,14 +302,17 @@ float Graph::updateValue(const Hex& n) const
 			++nbWall;
 	}
 
-	return 6 - nbBorder - nbKnown + nbWindow;
+	return 7 - nbBorder - nbKnown - nbWall + nbWindow;
 }
 
 
-vector<Edge> Graph::aStar(const Hex& start, const Hex& finish) const
+vector<Edge> Graph::aStar(const Hex& start, const Hex& finish, bool exploration) const
 {
 	auto heuristic = [](Hex h1, Hex h2) {/*return std::sqrt((h1.x-h2.x)* (h1.x - h2.x) + (h1.y - h2.y) * (h1.y - h2.y) + (h1.x - h2.x) * (h1.y - h2.y));*/
 		return (std::abs(h1.x - h2.x) + std::abs(h1.y - h2.y) + std::abs(h1.z - h2.z)) / 3.1451f; };
+
+	auto getCost = [g = nodes, exploration](Edge e) {return exploration ? e.getCost()/g.at(e.getTo()).getValue() : e.getCost(); };
+	
 	// Initialize the record for the start node
 	NodeRecord startRecord;
 	//startRecord.node = nodes.at(start);
@@ -341,7 +344,7 @@ vector<Edge> Graph::aStar(const Hex& start, const Hex& finish) const
 		// Loop throught each connection in turn
 		for (Edge e : connections) {
 			Hex endNode = e.hex_to;
-			int endNodeCost = current.costSoFar + e.cost;
+			int endNodeCost = current.costSoFar + getCost(e);
 			NodeRecord endNodeRecord;
 			int endNodeHeuristic;
 

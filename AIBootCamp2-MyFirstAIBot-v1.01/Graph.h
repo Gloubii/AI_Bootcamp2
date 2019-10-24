@@ -48,7 +48,7 @@ public:
 
 	Hex getFrom() const;
 	Hex getTo() const;
-	int getCost() const;
+	float getCost() const;
 	std::string toString() const;
 	EHexCellDirection toDirection() const;
 };
@@ -90,7 +90,7 @@ public:
 	bool connected(Hex n1, Hex n2, bool allConnection) const;
 	float updateValue(const Hex& n) const;
 
-	std::vector<Edge> aStar(const Hex& start, const Hex& finish) const;
+	std::vector<Edge> aStar(const Hex& start, const Hex& finish, const bool exploration = false) const;
 
 	std::string toString() const;
 
