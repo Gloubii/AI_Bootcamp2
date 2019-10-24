@@ -16,7 +16,8 @@ class NPC
 
 	Hex goal;
 	std::vector<Hex> pastGoals;
-	
+	std::vector<Hex> reachableGoals;
+
 	OrderPath orderPath;
 	BehaviorTree behaviorTree;
 
@@ -40,6 +41,7 @@ public:
 	
 	Manager_t* manager;
 	
+
 	NPC(Manager_t *manager, const SNPCInfo &npcInfo, Graph &graph);
 
 	bool Update(const SNPCInfo& npcInfo);
@@ -51,6 +53,8 @@ public:
 
 	Hex GetIntention() const;
 	bool IsOnGoal() const;
+	void updateReachableGoals(Hex h);
+	bool isReachableGoal(Hex h);
 
 	void SetGoal(const Hex& hex);
 	Hex GetGoal() const;

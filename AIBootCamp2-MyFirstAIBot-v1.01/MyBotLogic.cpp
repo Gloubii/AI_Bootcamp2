@@ -12,7 +12,7 @@
 #include "OutilDebug/TestGraphe.h"
 
 
-MyBotLogic::MyBotLogic()
+MyBotLogic::MyBotLogic() : g{}, manager{}
 {
 	//Write Code Here
 }
@@ -34,7 +34,6 @@ void MyBotLogic::Configure(const SConfigData& _configData)
 	//Write Code Here
 }
 
-Graph g;
 
 void MyBotLogic::Init(const SInitData& _initData)
 {
@@ -45,6 +44,7 @@ void MyBotLogic::Init(const SInitData& _initData)
 
 	//Create graph
 	g = Graph(_initData);
+	manager.modele = &g;
 
 	for (int i = 0; i < _initData.nbNPCs; ++i) {
 		manager.npcs.push_back(NPC{&manager,_initData.npcInfoArray[i], g});

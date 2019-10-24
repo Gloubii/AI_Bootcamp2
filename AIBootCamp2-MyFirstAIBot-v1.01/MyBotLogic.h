@@ -35,6 +35,6 @@ public:
 protected:
 	Logger mLogger;
 	Manager manager;
-
+	Graph g;
 
 };

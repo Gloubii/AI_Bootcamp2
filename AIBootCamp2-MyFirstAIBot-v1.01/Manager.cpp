@@ -1,5 +1,8 @@
 #include "Manager.h"
 #include <algorithm>
+
+using namespace std;
+
 void Manager::createBasicbehaviorTree()
 {
 	for (auto& npc : npcs) {
@@ -41,25 +44,140 @@ void Manager::assignGoals()
 
 void Manager::getNewGoal(NPC* npc)
 {
-	if (!goals.size()) throw std::exception("No other goals to give");
+	if (state == EXPLORATION) {
+		// on recupere les nodes et on les trie par ordre decroissant de valeur d'exploration
+		vector<Node> allNodes = modele->getNodes();
+		sort(allNodes.begin(), allNodes.end(), [](Node a, Node b) {
+			return a.getValue() < b.getValue();
+		});
+		reverse(allNodes.begin(), allNodes.end());
 
-	std::vector<Hex> remainingGoals;
-	std::copy_if(begin(goals), end(goals), std::back_inserter(remainingGoals), [&lastGoals = npc->GetPastGoals()](auto hex) 
-		{
-		return std::find(begin(lastGoals), end(lastGoals), hex) == end(lastGoals);
+		// on conserve les nodes avec la meilleure valeur (max avec cas d'egalite)
+		int i = 1;
+		vector<Node> bestNodes;
+		while (i < allNodes.size() && allNodes.at(i).getValue() == allNodes.at(i - 1).getValue()) {
+			bestNodes.push_back(allNodes.at(i));
+			i++;
 		}
-	);
 
-	if (!remainingGoals.size()) throw std::exception("No other goals to give");
+		Hex npcPosition = npc->GetPosition();
+		auto bestNode = min_element(bestNodes.begin(), bestNodes.end(), [&npcPosition](const Node& a, const Node& b) {
+			return npcPosition.DistanceTo(Hex{ a.getTile().q, a.getTile().r }) < npcPosition.DistanceTo(Hex{ b.getTile().q, b.getTile().r });
+		});
 
-	auto nearest = std::min_element(remainingGoals.cbegin(), remainingGoals.cend(),
-		[start = npc->GetPosition()](const Hex& g1, const Hex& g2)
-		{
-			return g1.DistanceTo(start) < g2.DistanceTo(start);
+		Hex newGoal(bestNode->getTile().q, bestNode->getTile().r);
+		npc->SetGoal(newGoal);
+	}
+	else {
+		// state == GOTO_GOALS
+		vector<Hex> npcTakenGoals;
+		for (NPC& npc : npcs) {
+			npcTakenGoals.push_back(npc.GetGoal());
 		}
-	);
 
-	goals.push_back(npc->GetGoal());
-	npc->SetGoal(*nearest);
-	goals.erase(std::find(begin(goals), end(goals), *nearest));
+		auto it = find_if(goals.begin(), goals.end(), [&npcTakenGoals](Hex goal) {
+			// retourne le premier true goal qui n'est pas parmi les npc taken goals (pas deja pris)
+			return (find(npcTakenGoals.begin(), npcTakenGoals.end(), goal) == npcTakenGoals.end());
+		});
+
+		npc->SetGoal(*it);
+	}
 }
+
+void Manager::update()
+{
+	goals = modele->GetGoals();
+	updateConnexite();
+	updateState();
+}
+
+void Manager::updateState()
+{
+	switch (state)
+	{
+	case Manager::INIT:
+		if (npcs.size() > 0) {
+			state = EXPLORATION;
+		}
+		break;
+
+	case Manager::EXPLORATION:
+		if (allGoalsReachable()) {
+			state = GOTO_GOALS;
+		}
+		break;
+
+	case Manager::GOTO_GOALS:
+		// etat final
+		break;
+
+	default:
+		break;
+	}
+}
+
+
+void Manager::updateConnexite()
+{
+	int i = 1;
+	while (i < connexeGoals.size()) {
+		Hex nodeI = *(connexeGoals.at(i).composants.begin());
+		Hex nodeH = *(connexeGoals.at(static_cast<int>(i - 1)).composants.begin());
+
+		if (modele->atteignable(nodeI, nodeH)) {
+			// on fusionne les deux composantes connexes
+			// et on en retire une de la liste des composantes (pas de doublon)
+			connexeGoals.at(static_cast<int>(i - 1)).fusionner(connexeGoals.at(static_cast<int>(i)));
+			connexeGoals.erase(connexeGoals.begin() + i);
+		}
+		else {
+			i++;
+		}
+	}
+
+	i = 1;
+	while (i < connexeNpcs.size()) {
+		Hex nodeI = connexeNpcs.at(i).composants.begin()->GetPosition();
+		Hex nodeH = connexeNpcs.at(static_cast<int>(i - 1)).composants.begin()->GetPosition();
+
+		if (modele->atteignable(nodeI, nodeH)) {
+			// on fusionne les deux composantes connexes
+			// et on en retire une de la liste des composantes (pas de doublon)
+			connexeNpcs.at(static_cast<int>(i - 1)).fusionner(connexeNpcs.at(static_cast<int>(i)));
+			connexeNpcs.erase(connexeNpcs.begin() + i);
+		}
+		else {
+			i++;
+		}
+	}
+}
+
+bool Manager::allGoalsReachable()
+{
+	if (connexeGoals.size() < connexeNpcs.size())
+		return false;
+
+	for (Connexe<NPC> coNPC : connexeNpcs) {
+		const NPC& representantNPC = *coNPC.composants.begin();
+		
+		bool foundAssociatedGoals = false;
+		for (Connexe<Hex> coGoals : connexeGoals) {
+			Hex representantGoal = *coGoals.composants.begin();
+			if (modele->atteignable(representantGoal, representantNPC.GetPosition())) {
+				foundAssociatedGoals = true;
+
+				if (coNPC.composants.size() > coGoals.composants.size())
+					return false; // il n'y a pas assez de goals atteignables par les NPCs de ce cluster
+
+				break;
+			}
+		}
+
+		if (!foundAssociatedGoals) {
+			return false; // les NPC du cluster de son representant ne peuvent atteindre aucun goal connu
+		}
+	}
+
+	return true; // pour tous les clusters de NPC, on a trouve leur cluster de Goal associe et il contient assez de goals
+}
+
