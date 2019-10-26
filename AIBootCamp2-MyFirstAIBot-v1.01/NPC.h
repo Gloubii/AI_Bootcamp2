@@ -1,8 +1,8 @@
 #ifndef NPC_H
 #define NPC_H
 
-#include"Hex.h"
-#include"OrderPath.h"
+#include "Hex.h"
+#include "OrderPath.h"
 #include "Globals.h"
 #include "Task.h"
 #include "Graph.h"
@@ -87,12 +87,7 @@ public:
 
 	struct TaskGetPath : TaskAction 
 	{
-		ReturnValue run(BlackboardPtr blackboard) override {
-			auto p = blackboard->getValue<Path_t*>("path");
-			auto g = blackboard->getValue<Graph*>("graph");
-			*p = g->aStar(blackboard->getValue<Hex>("currentPos"), blackboard->getValue<Hex>("goal"));
-			return SUCCESS;
-		}
+		ReturnValue run(BlackboardPtr blackboard);
 
 		ClonePtr clone() override {
 			return new TaskGetPath;

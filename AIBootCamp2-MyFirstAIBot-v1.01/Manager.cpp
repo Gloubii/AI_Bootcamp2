@@ -1,5 +1,7 @@
 #include "Manager.h"
 #include <algorithm>
+#include <fstream>
+#include "Globals.h"
 
 using namespace std;
 
@@ -7,6 +9,7 @@ void Manager::initManager(SInitData initData, Graph* modele_)
 {
 	// pointeur sur le modele
 	modele = modele_;
+	goals = modele->GetGoals();
 
 	// recuperation des npcs
 	for (int i = 0; i < initData.nbNPCs; ++i) {
@@ -76,9 +79,19 @@ void Manager::assignGoals()
 
 void Manager::getNewGoal(NPC* npc)
 {
+	/*fstream file("getNewGoal.txt", ofstream::app);
+	Hex pos = npc->GetPosition();
+	file << "from " << pos.toString() << "to ";*/
+
 	if (state == EXPLORATION) {
 		// on recupere les nodes et on les trie par ordre decroissant de valeur d'exploration
-		vector<Node> allNodes = modele->getNodes();
+		set<Hex> connexes = modele->getConvexes(npc->GetPosition());
+		vector<Node> allNodes;
+		auto toNode = [&allNodes, g = modele](Hex h) {
+			allNodes.push_back(g->getNode(h));
+		};
+		for_each(connexes.begin(), connexes.end(), toNode);
+
 		sort(allNodes.begin(), allNodes.end(), [](Node a, Node b) {
 			return a.getValue() < b.getValue();
 		});
@@ -99,6 +112,7 @@ void Manager::getNewGoal(NPC* npc)
 
 		Hex newGoal(bestNode->getTile().q, bestNode->getTile().r);
 		npc->SetGoal(newGoal);
+		//file << newGoal.toString() << endl;
 	}
 	else {
 		// state == GOTO_GOALS
@@ -107,18 +121,30 @@ void Manager::getNewGoal(NPC* npc)
 			npcTakenGoals.push_back(npc.GetGoal());
 		}
 
-		auto it = find_if(goals.begin(), goals.end(), [&npcTakenGoals](Hex goal) {
+		// recuperation des goals connexes
+		set<Hex> connexeHex = modele->getConvexes(npc->GetPosition());
+		vector<Hex> connexeGoals;
+		for (Hex h : connexeHex) {
+			if (modele->getNode(h).getTile().type == Goal)
+				connexeGoals.push_back(h);
+		}
+		auto it = find_if(connexeGoals.begin(), connexeGoals.end(), [&npcTakenGoals](Hex goal) {
 			// retourne le premier true goal qui n'est pas parmi les npc taken goals (pas deja pris)
 			return (find(npcTakenGoals.begin(), npcTakenGoals.end(), goal) == npcTakenGoals.end());
 		});
 
 		npc->SetGoal(*it);
+		//file << it->toString() << endl;
 	}
 }
 
-void Manager::getPath(NPC* npc)
+vector<Edge> Manager::getPath(NPC* npc)
 {
-	
+	Hex start = npc->GetPosition();
+	Hex finish = npc->GetGoal();
+	bool exploration = (state == EXPLORATION);
+	vector<Edge> path = modele->aStar(start, finish, exploration);
+	return path;
 }
 
 void Manager::update()

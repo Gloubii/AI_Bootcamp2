@@ -1,10 +1,12 @@
 #pragma once
 
+
+#include <set>
 #include "NPC.h"
 #include "Globals.h"
 #include "Graph.h"
-#include <set>
 
+class NPC;
 
 class Manager
 {
@@ -45,7 +47,7 @@ public:
 
 	void assignGoals();
 	void getNewGoal(NPC* npc);
-	void getPath(NPC* npc);
+	std::vector<Edge> getPath(NPC* npc);
 	void update();
 };
 

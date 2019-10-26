@@ -153,3 +153,14 @@ Task::ReturnValue NPC::TaskNextBlocked::run(BlackboardPtr blackboard)
 	if (other) blackboard->write("other", other);
 	return other ? SUCCESS : FAILLURE;
 }
+
+Task::ReturnValue NPC::TaskGetPath::run(BlackboardPtr blackboard)
+{
+	auto p = blackboard->getValue<Path_t*>("path");
+	auto m = blackboard->getValue<Manager*>("manager");
+	auto npc = blackboard->getValue<NPC*>("npc");
+
+	*p = m->getPath(npc);
+	
+	return SUCCESS;
+}

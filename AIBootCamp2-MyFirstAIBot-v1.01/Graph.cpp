@@ -384,6 +384,13 @@ string Graph::afficheConvexes() const
 	return out;
 }
 
+std::set<Hex> Graph::getConvexes(const Hex& start)
+{
+	auto startInConv = [start](set<Hex> graph) {return graph.count(start); };
+	auto graphS = find_if(convexes.begin(), convexes.end(), startInConv);
+	return *graphS;
+}
+
 
 vector<Edge> Graph::aStar(const Hex& start, const Hex& finish, bool exploration) const
 {
@@ -483,7 +490,13 @@ vector<Edge> Graph::aStar(const Hex& start, const Hex& finish, bool exploration)
 	while (current.hex_node != start) {
 		path.push_back(current.edge);
 		auto isPrec = [node = current.edge.hex_from](NodeRecord nr) {return nr.hex_node == node; };
-		current = *find_if(begin(closed), end(closed), isPrec);
+		auto it = find_if(begin(closed), end(closed), isPrec);
+		if (it != end(closed)) {
+			current = *it;
+		}
+		else {
+			current = *find_if(begin(open), end(open), isPrec);
+		}
 	}
 	reverse(begin(path), end(path));
 	//path.erase(begin(path));

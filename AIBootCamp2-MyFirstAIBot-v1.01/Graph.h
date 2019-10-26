@@ -92,6 +92,7 @@ public:
 	bool connected(Hex n1, Hex n2, bool allConnection) const;
 	float updateValue(const Hex& n) const;
 	std::string afficheConvexes() const;
+	std::set<Hex> getConvexes(const Hex& start);
 
 	std::vector<Edge> aStar(const Hex& start, const Hex& finish, const bool exploration = false) const;
 

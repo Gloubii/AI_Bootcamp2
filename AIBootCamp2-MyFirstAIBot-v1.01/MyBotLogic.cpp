@@ -52,7 +52,7 @@ void MyBotLogic::Init(const SInitData& _initData)
 
 	if (_initData.omniscient) {
 		BOT_LOGIC_LOG(mLogger, "omniscient", true);
-		manager.goals = g.GetGoals();
+		manager.state = Manager::GOTO_GOALS;
 		manager.assignGoals();
 	}
 
@@ -63,9 +63,11 @@ void MyBotLogic::GetTurnOrders(const STurnData& _turnData, std::list<SOrder>& _o
 {
 	BOT_LOGIC_LOG(mLogger, "GetTurnOrders", true);
 	g.Update(_turnData);
-	manager.update();
-	manager.updateNpc(_turnData);
 	BOT_LOGIC_LOG(mLogger, "Updated graph", true);
+	manager.update();
+	BOT_LOGIC_LOG(mLogger, "Updated manager", true);
+	manager.updateNpc(_turnData);
+	BOT_LOGIC_LOG(mLogger, "Updated npc", true);
 	for (NPC& npc : manager.npcs) {
 		npc.SetUpBlackboard();
 		BOT_LOGIC_LOG(mLogger, "Setup Blackboard", true);
