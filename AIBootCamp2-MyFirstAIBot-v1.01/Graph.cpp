@@ -53,9 +53,9 @@ float Edge::getCost() const
 	return cost;
 }
 
-int Edge::getCost(EObjectType& object_) const
+float Edge::getCost(EObjectType& object_) const
 {
-	int cost = getCost();
+	auto cost = getCost();
 	if (cost == -1) {
 		object_ = object;
 	}
