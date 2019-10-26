@@ -44,12 +44,9 @@ void MyBotLogic::Init(const SInitData& _initData)
 
 	//Create graph
 	g = Graph(_initData);
-	manager.modele = &g;
-
-	for (int i = 0; i < _initData.nbNPCs; ++i) {
-		manager.npcs.push_back(NPC{&manager,_initData.npcInfoArray[i], g});
-	}
-
+	
+	// Init manager
+	manager.initManager(_initData, &g);
 	manager.createBasicbehaviorTree();
 	BOT_LOGIC_LOG(mLogger, "BehaviorTree created", true);
 
@@ -66,6 +63,7 @@ void MyBotLogic::GetTurnOrders(const STurnData& _turnData, std::list<SOrder>& _o
 {
 	BOT_LOGIC_LOG(mLogger, "GetTurnOrders", true);
 	g.Update(_turnData);
+	manager.update();
 	manager.updateNpc(_turnData);
 	BOT_LOGIC_LOG(mLogger, "Updated graph", true);
 	for (NPC& npc : manager.npcs) {

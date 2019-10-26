@@ -3,6 +3,38 @@
 
 using namespace std;
 
+void Manager::initManager(SInitData initData, Graph* modele_)
+{
+	// pointeur sur le modele
+	modele = modele_;
+
+	// recuperation des npcs
+	for (int i = 0; i < initData.nbNPCs; ++i) {
+		npcs.push_back(NPC{ this,initData.npcInfoArray[i], *modele_ });
+		addNpcToConnexite(&npcs.at(i));
+	}
+}
+
+void Manager::addNpcToConnexite(NPC* newNpc)
+{
+	// Ajout du npc dans les composantes connexes
+	auto itConnexe = find_if(connexeNpcs.begin(), connexeNpcs.end(), [&](Connexe<NPC*> c) {
+		NPC* representant = *c.composants.begin();
+		return modele->atteignable(representant->GetPosition(), newNpc->GetPosition());
+	});
+	
+	if (itConnexe == connexeNpcs.end()) {
+		// s'il n'existe pas encore de composante connexe permettant d'introduire le nouveau npc,
+		// on en construit une nouvelle
+		Connexe<NPC*> newConnexite;
+		newConnexite.composants.emplace(newNpc);
+	}
+	else {
+		// sinon, on ajoute le nouvel npc aux npcs de sa composante connexe
+		itConnexe->composants.emplace(newNpc);
+	}
+}
+
 void Manager::createBasicbehaviorTree()
 {
 	for (auto& npc : npcs) {
@@ -84,6 +116,11 @@ void Manager::getNewGoal(NPC* npc)
 	}
 }
 
+void Manager::getPath(NPC* npc)
+{
+	
+}
+
 void Manager::update()
 {
 	goals = modele->GetGoals();
@@ -137,8 +174,11 @@ void Manager::updateConnexite()
 
 	i = 1;
 	while (i < connexeNpcs.size()) {
-		Hex nodeI = connexeNpcs.at(i).composants.begin()->GetPosition();
-		Hex nodeH = connexeNpcs.at(static_cast<int>(i - 1)).composants.begin()->GetPosition();
+		NPC* npcI = *connexeNpcs.at(i).composants.begin();
+		NPC* npcH = *connexeNpcs.at(static_cast<int>(i - 1)).composants.begin();
+
+		Hex nodeI = npcI->GetPosition();
+		Hex nodeH = npcH->GetPosition();
 
 		if (modele->atteignable(nodeI, nodeH)) {
 			// on fusionne les deux composantes connexes
@@ -157,13 +197,13 @@ bool Manager::allGoalsReachable()
 	if (connexeGoals.size() < connexeNpcs.size())
 		return false;
 
-	for (Connexe<NPC> coNPC : connexeNpcs) {
-		const NPC& representantNPC = *coNPC.composants.begin();
+	for (Connexe<NPC*> coNPC : connexeNpcs) {
+		const NPC* representantNPC = *coNPC.composants.begin();
 		
 		bool foundAssociatedGoals = false;
 		for (Connexe<Hex> coGoals : connexeGoals) {
 			Hex representantGoal = *coGoals.composants.begin();
-			if (modele->atteignable(representantGoal, representantNPC.GetPosition())) {
+			if (modele->atteignable(representantGoal, representantNPC->GetPosition())) {
 				foundAssociatedGoals = true;
 
 				if (coNPC.composants.size() > coGoals.composants.size())

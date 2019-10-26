@@ -25,7 +25,7 @@ private:
 	bool allGoalsReachable();
 
 	std::vector<Connexe<Hex>> connexeGoals;
-	std::vector<Connexe<NPC>> connexeNpcs;
+	std::vector<Connexe<NPC*>> connexeNpcs;
 
 public:
 	enum ManagerState { INIT, EXPLORATION, GOTO_GOALS };
@@ -36,14 +36,16 @@ public:
 	std::vector<Hex> tempGoals;
 	ManagerState state = INIT;
 
+	void initManager(SInitData initData, Graph* modele_);
+	void addNpcToConnexite(NPC* newNpc);
 	void createBasicbehaviorTree();
 	void updateNpc(const STurnData& _turnData);
 	bool isOccuped(const Hex& hex);
-	//Return nullptr if the hex is empty
-	NPC* getOccupant(const Hex& hex);
+	NPC* getOccupant(const Hex& hex); //Return nullptr if the hex is empty
 
 	void assignGoals();
 	void getNewGoal(NPC* npc);
+	void getPath(NPC* npc);
 	void update();
 };
 

@@ -150,6 +150,7 @@ public:
 	};
 };
 
+
 #endif // !NPC_H
 
 
