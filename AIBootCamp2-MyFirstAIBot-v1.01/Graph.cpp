@@ -48,7 +48,7 @@ Hex Edge::getTo() const
 	return hex_to;
 }
 
-int Edge::getCost() const
+float Edge::getCost() const
 {
 	return cost;
 }
@@ -89,13 +89,60 @@ EHexCellDirection Edge::toDirection() const
 	return (hex_to - hex_from).ToDirection();
 }
 
+void Graph::creerConvexes(){
+	vector<Hex> hexes = GetHexes();
+	auto hex = hexes.begin();
+	while (nodes.at(*hex).isUnknown() || nodes.at(*hex).getTile().type == EHexCellType::Forbidden)
+		++hex;
+
+	convexes.push_back({ *hex });
+	++hex;
+	for (; hex != hexes.end(); ++hex) {
+		if (nodes.at(*hex).isUnknown() || nodes.at(*hex).getTile().type == EHexCellType::Forbidden)
+			continue;
+
+		auto inSet = [graph = *this, hex](set<Hex> g) { return graph.aStar(*hex, *g.begin()).size(); };
+		auto graph = find_if(convexes.begin(), convexes.end(), inSet);
+		if (graph == convexes.end()) {
+			convexes.push_back({ *hex });
+		} else {
+			graph._Ptr->insert(*hex);
+		}
+	}
+}
+
+void Graph::addToConvexes(const Hex& start, const Hex& finish)
+{
+	auto startInConv = [start](set<Hex> graph) {return graph.count(start); };
+	auto graphS = find_if(convexes.begin(), convexes.end(), startInConv);
+	if (graphS != convexes.end()) {
+		auto finishInConv = [finish](set<Hex> graph) {return graph.count(finish); };
+		auto graphF = find_if(convexes.begin(), convexes.end(), finishInConv);
+
+		if (graphF == convexes.end())
+			graphS._Ptr->insert(finish);
+
+		else if (graphS != graphF)
+			graphS._Ptr->merge(*graphF._Ptr);
+	}
+}
+
+void Graph::addToConvexes(const Hex& hex)
+{
+	auto InConv = [hex](set<Hex> graph) {return graph.count(hex); };
+	auto graph = find_if(convexes.begin(), convexes.end(), InConv);
+	if (graph == convexes.end()) {
+		convexes.push_back({ hex });
+	}
+}
+
 
 Graph::Graph(const SInitData& initData) : maxRow(initData.rowCount), maxCol(initData.colCount)
 {
 	// add nodes
 	for (int i = 0; i < initData.tileInfoArraySize; ++i) {
 		nodes.insert_or_assign(Hex{ initData.tileInfoArray[i].q, initData.tileInfoArray[i].r }, Node(initData.tileInfoArray[i]));
-		if (initData.tileInfoArray[i].type == EHexCellType::Goal) {
+		if (initData.tileInfoArray[i].type == Goal) {
 			goals.push_back(Hex{ initData.tileInfoArray[i].q, initData.tileInfoArray[i].r });
 		}
 	}
@@ -130,7 +177,7 @@ Graph::Graph(const SInitData& initData) : maxRow(initData.rowCount), maxCol(init
 					object = (EObjectType)objet.types[objet.typesSize - 1];
 					return true; };
 				if (find_if(begin(objects), end(objects), isWall) == end(objects)) {
-					if (nodes.at(hex).getTile().type == EHexCellType::Forbidden || nodes.at(voisin).getTile().type == EHexCellType::Forbidden)
+					if (nodes.at(hex).getTile().type == Forbidden || nodes.at(voisin).getTile().type == Forbidden)
 						edges.push_back(Edge(hex, voisin, -2));
 					else if (nodes.at(hex).isUnknown() || nodes.at(voisin).isUnknown())
 						edges.push_back(Edge(hex, voisin, -3));
@@ -143,11 +190,14 @@ Graph::Graph(const SInitData& initData) : maxRow(initData.rowCount), maxCol(init
 		}
 	}
 
+	creerConvexes();
 
 	// calculer les values
 	for (auto h : GetHexes())
 		updateValue(h);
 }
+
+
 
 bool Graph::Update(const STurnData& turnData)
 {
@@ -157,7 +207,7 @@ bool Graph::Update(const STurnData& turnData)
 		if (!Contains(Hex(turnData.tileInfoArray[i].q, turnData.tileInfoArray[i].r))) {
 			nodes.insert_or_assign(Hex{ turnData.tileInfoArray[i].q, turnData.tileInfoArray[i].r }, Node(turnData.tileInfoArray[i]));
 			changed.push_back(Hex{ turnData.tileInfoArray[i].q, turnData.tileInfoArray[i].r });
-			if (turnData.tileInfoArray[i].type == EHexCellType::Goal) {
+			if (turnData.tileInfoArray[i].type == Goal) {
 				goals.push_back(Hex{ turnData.tileInfoArray[i].q, turnData.tileInfoArray[i].r });
 			}
 		}
@@ -217,15 +267,21 @@ bool Graph::Update(const STurnData& turnData)
 						object = (EObjectType)objet.types[objet.typesSize - 1];
 						return true; };
 					if (find_if(begin(objects), end(objects), isWall) == end(objects)) {
-						if (nodes.at(hex).getTile().type == EHexCellType::Forbidden || nodes.at(voisin).getTile().type == EHexCellType::Forbidden)
+						if (nodes.at(hex).getTile().type == Forbidden || nodes.at(voisin).getTile().type == Forbidden)
 							edges.push_back(Edge(hex, voisin, -2));		// Connection to/from a red tile
 						else if (nodes.at(hex).isUnknown() || nodes.at(voisin).isUnknown())
 							edges.push_back(Edge(hex, voisin, -3));		// Connection to/from an unknown tile
-						else
+						else {
 							edges.push_back(Edge(hex, voisin, 1));		// Normal connection used by the pathfinding
+							addToConvexes(hex, voisin);
+						}
 					}
-					else
+					else {
 						edges.push_back(Edge(hex, voisin, -1, object));	// Connection with an object between the two tiles.
+						if (object == EObjectType::Window && nodes.at(hex).getTile().type != Forbidden) {
+							addToConvexes(hex);
+						}
+					}
 				}
 			}
 		}
@@ -294,8 +350,8 @@ std::vector<Node> Graph::getNodes() const
 
 float Graph::updateValue(const Hex& n) const
 {
-	if (nodes.at(n).isUnknown())
-		return 6;							// TODO : 6 or 0 ?
+	//if (nodes.at(n).isUnknown())
+	//	return 6;							// TODO : 6 or 0 ?
 	// interêt, désinterêt, abscence d'info
 	std::vector<Edge> connections = getAllConnections(n);
 	int nbBorder = n.NbBorder(maxRow, maxCol);
@@ -303,7 +359,7 @@ float Graph::updateValue(const Hex& n) const
 	int nbWindow = 0;
 	int nbWall = 0;
 	for (auto e : connections) {
-		if (e.cost != -1)
+		if (e.cost != -1 && e.cost != -3)
 			++nbKnown;
 		else if (e.object == EObjectType::Window)
 			++nbWindow;
@@ -311,18 +367,37 @@ float Graph::updateValue(const Hex& n) const
 			++nbWall;
 	}
 
-	return 6 - nbBorder - nbKnown + nbWindow;
+	return 7 - nbBorder - nbKnown - nbWall + nbWindow;
+}
+
+string Graph::afficheConvexes() const
+{
+	string out;
+	out.append(to_string(nodes.size()) + "\n");
+	out.append(to_string(convexes.size()) + "\n");
+	for (auto graph : convexes) {
+		out.append("\n sous graphe \n");
+		for (auto hex : graph) {
+			out.append(hex.toString() + "\n");
+		}
+	}
+	return out;
 }
 
 
-vector<Edge> Graph::aStar(const Hex& start, const Hex& finish) const
+vector<Edge> Graph::aStar(const Hex& start, const Hex& finish, bool exploration) const
 {
+	auto heuristic = [](Hex h1, Hex h2) {/*return std::sqrt((h1.x-h2.x)* (h1.x - h2.x) + (h1.y - h2.y) * (h1.y - h2.y) + (h1.x - h2.x) * (h1.y - h2.y));*/
+		return (std::abs(h1.x - h2.x) + std::abs(h1.y - h2.y) + std::abs(h1.z - h2.z)) / 3.1451f; };
+
+	auto getCost = [g = nodes, exploration](Edge e) {return exploration ? e.getCost()/g.at(e.getTo()).getValue() : e.getCost(); };
+	
 	// Initialize the record for the start node
 	NodeRecord startRecord;
 	//startRecord.node = nodes.at(start);
 	startRecord.hex_node = start;
 	startRecord.costSoFar = 0;
-	startRecord.estimatedTotalCost = start.DistanceTo(finish);
+	startRecord.estimatedTotalCost = heuristic(start,finish);
 
 	// Initialize the open and closed list
 	vector<NodeRecord> open;
@@ -348,7 +423,7 @@ vector<Edge> Graph::aStar(const Hex& start, const Hex& finish) const
 		// Loop throught each connection in turn
 		for (Edge e : connections) {
 			Hex endNode = e.hex_to;
-			int endNodeCost = current.costSoFar + e.cost;
+			int endNodeCost = current.costSoFar + getCost(e);
 			NodeRecord endNodeRecord;
 			int endNodeHeuristic;
 
@@ -381,7 +456,7 @@ vector<Edge> Graph::aStar(const Hex& start, const Hex& finish) const
 			}
 			else {
 				endNodeRecord.hex_node = endNode;
-				endNodeHeuristic = endNode.DistanceTo(finish);
+				endNodeHeuristic = heuristic(endNode, finish);
 			}
 
 			// we're here if we need to update the node. Update the cost, estimate ans connection
@@ -417,7 +492,9 @@ vector<Edge> Graph::aStar(const Hex& start, const Hex& finish) const
 
 bool Graph::atteignable(const Hex& start, const Hex& finish) const
 {
-	return aStar(start,finish).size();
+	auto startInConv = [start](set<Hex> graph) {return graph.count(start); };
+	auto graphS = find_if(convexes.begin(), convexes.end(), startInConv);
+	return graphS._Ptr->count(finish);
 }
 
 
