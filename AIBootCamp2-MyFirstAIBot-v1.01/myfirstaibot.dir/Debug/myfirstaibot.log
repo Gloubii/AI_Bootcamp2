@@ -1,4 +1,48 @@
-﻿  Manager.cpp
+﻿  AIBot.cpp
+E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\NPC.h(154,13): warning C4244:  'return': conversion from 'float' to 'int', possible loss of data
+E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\NPC.h(165,39): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\NPC.h(165,31): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\NPC.h(165,67): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\NPC.h(165,59): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\NPC.h(165,95): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+  Graph.cpp
+E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\NPC.h(165,87): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\Graph.cpp(361,51): warning C4244:  '=': conversion from 'int' to 'float', possible loss of data
+E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\Graph.cpp(391,44): warning C4244:  '=': conversion from 'float' to 'int', possible loss of data
+E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\Graph.cpp(417,20): warning C4244:  'initializing': conversion from 'float' to 'int', possible loss of data
+  Hex.cpp
+  Manager.cpp
+E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\Graph.cpp(450,33): warning C4244:  '=': conversion from 'float' to 'int', possible loss of data
+E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\NPC.h(154,13): warning C4244:  'return': conversion from 'float' to 'int', possible loss of data
+E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\NPC.h(165,39): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\NPC.h(165,31): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\NPC.h(165,67): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\NPC.h(165,59): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\NPC.h(165,95): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+  MyBotLogic.cpp
+E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\NPC.h(165,87): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\NPC.h(154,13): warning C4244:  'return': conversion from 'float' to 'int', possible loss of data
+E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\NPC.h(165,39): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\NPC.h(165,31): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\NPC.h(165,67): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\NPC.h(165,59): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\NPC.h(165,95): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+  NPC.cpp
+E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\NPC.h(165,87): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\NPC.h(154,13): warning C4244:  'return': conversion from 'float' to 'int', possible loss of data
+E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\NPC.h(165,39): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\NPC.h(165,31): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\NPC.h(165,67): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\NPC.h(165,59): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\NPC.h(165,95): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
   Task.cpp
+E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\NPC.h(165,87): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\NPC.h(154,13): warning C4244:  'return': conversion from 'float' to 'int', possible loss of data
+E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\NPC.h(165,39): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\NPC.h(165,31): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\NPC.h(165,67): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\NPC.h(165,59): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\NPC.h(165,95): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
   Generating Code...
+E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\NPC.h(165,87): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
   myfirstaibot.vcxproj -> E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\Debug\myfirstaibot.dll

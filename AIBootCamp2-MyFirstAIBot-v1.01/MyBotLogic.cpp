@@ -49,9 +49,10 @@ void MyBotLogic::Init(const SInitData& _initData)
 	manager.createBasicbehaviorTree();
 	BOT_LOGIC_LOG(mLogger, "BehaviorTree created", true);
 
-	if (_initData.omniscient) {
+	if (_initData.omniscient || true) {
 		BOT_LOGIC_LOG(mLogger, "omniscient", true);
-		manager.goals = g.GetGoals();
+		//manager.goals = g.GetGoals();
+		manager.goals = { Hex{ 0, 4 } };
 		manager.assignGoals();
 	}
 
@@ -72,7 +73,6 @@ void MyBotLogic::GetTurnOrders(const STurnData& _turnData, std::list<SOrder>& _o
 		_orders.push_back(npc.NextOrder());
 		BOT_LOGIC_LOG(mLogger, "push back order", true);
 	}
-	//Write Code Here
 }
 
 

@@ -339,7 +339,7 @@ std::vector<Node> Graph::getNodes() const
 	return v_nodes;
 }
 
-float Graph::updateValue(const Hex& n) const
+void Graph::updateValue(const Hex& n)
 {
 	//if (nodes.at(n).isUnknown())
 	//	return 6;							// TODO : 6 or 0 ?
@@ -358,7 +358,7 @@ float Graph::updateValue(const Hex& n) const
 			++nbWall;
 	}
 
-	return 7 - nbBorder - nbKnown - nbWall + nbWindow;
+	nodes[n].value = 7 - nbBorder - nbKnown - nbWall + nbWindow;
 }
 
 string Graph::afficheConvexes() const

@@ -89,7 +89,7 @@ public:
 	std::vector<Node> getNeighbours(const Hex& hex) const;
 	std::vector<Node> getNodes() const;
 	bool connected(Hex n1, Hex n2, bool allConnection) const;
-	float updateValue(const Hex& n) const;
+	void updateValue(const Hex& n);
 	std::string afficheConvexes() const;
 
 	std::vector<Edge> aStar(const Hex& start, const Hex& finish, const bool exploration = false) const;
