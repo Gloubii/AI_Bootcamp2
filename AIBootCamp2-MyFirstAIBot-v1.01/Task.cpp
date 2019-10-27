@@ -113,7 +113,7 @@ void BehaviorTree::initBehaviorTree()
 						b->overwrite("goal", npc->GetGoal());
 				} }
 			}} },
-			new TaskFaillure{ new TaskSequence{{
+			new TaskInverter{ new TaskSequence{{
 					new NPC::TaskGetPath,
 					new TaskPredicate{[](Task::BlackboardPtr b) {return !b->getValue<NPC::Path_t*>("path")->size(); }},
 					new NPC::TaskWait

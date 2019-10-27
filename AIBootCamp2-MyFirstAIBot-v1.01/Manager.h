@@ -14,6 +14,8 @@ private:
 	template <class T>
 	struct Connexe {
 		std::set<T> composants;
+		T representant;
+		Connexe(T init) : composants{ { init } }, representant{ init } {}
 		bool isInside(T elmt) const noexcept {
 			return (std::find(composants.begin(), composants.end(), elmt) != composants.end());
 		}
@@ -39,7 +41,7 @@ public:
 	ManagerState state = INIT;
 
 	void initManager(SInitData initData, Graph* modele_);
-	void addNpcToConnexite(NPC* newNpc);
+	void addNpcToConnexite(int id);
 	void createBasicbehaviorTree();
 	void updateNpc(const STurnData& _turnData);
 	bool isOccuped(const Hex& hex);

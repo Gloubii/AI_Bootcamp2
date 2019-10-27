@@ -54,6 +54,9 @@ void MyBotLogic::Init(const SInitData& _initData)
 		BOT_LOGIC_LOG(mLogger, "omniscient", true);
 		manager.state = Manager::GOTO_GOALS;
 	}
+	else {
+		manager.state = Manager::EXPLORATION;
+	}
 	manager.assignGoals();
 
 	BOT_LOGIC_LOG(mLogger, g.toString(), true);

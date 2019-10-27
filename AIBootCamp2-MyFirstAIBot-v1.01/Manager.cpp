@@ -15,28 +15,34 @@ void Manager::initManager(SInitData initData, Graph* modele_)
 	// recuperation des npcs
 	for (int i = 0; i < initData.nbNPCs; ++i) {
 		npcs.push_back(NPC{ this,initData.npcInfoArray[i], *modele_ });
-		addNpcToConnexite(&npcs.at(i));
+	}
+	for (int i = 0; i < initData.nbNPCs; i++) {
+		addNpcToConnexite(i);
 	}
 }
 
-void Manager::addNpcToConnexite(NPC* newNpc)
+void Manager::addNpcToConnexite(int id)
 {
+	NPC& newNpc = npcs.at(id);
+
 	// Ajout du npc dans les composantes connexes
-	auto itConnexe = find_if(connexeNpcs.begin(), connexeNpcs.end(), [&](Connexe<NPC*> c) {
-		NPC* representant = *c.composants.begin();
-		return modele->atteignable(representant->GetPosition(), newNpc->GetPosition());
+	auto itConnexe = find_if(connexeNpcs.begin(), connexeNpcs.end(), [&](const Connexe<NPC*>& c) {
+		NPC* representant = c.representant;
+		return modele->atteignable(representant->GetPosition(), newNpc.GetPosition());
 	});
-	
+
 	if (itConnexe == connexeNpcs.end()) {
 		// s'il n'existe pas encore de composante connexe permettant d'introduire le nouveau npc,
 		// on en construit une nouvelle
-		Connexe<NPC*> newConnexite;
-		newConnexite.composants.emplace(newNpc);
+		//Connexe<NPC*> newConnexite;
+		//newConnexite.composants.insert(newNpc);
+		connexeNpcs.emplace_back(&newNpc);
 	}
 	else {
 		// sinon, on ajoute le nouvel npc aux npcs de sa composante connexe
-		itConnexe->composants.emplace(newNpc);
+		itConnexe->composants.insert(&newNpc);
 	}
+
 }
 
 void Manager::createBasicbehaviorTree()
@@ -68,17 +74,6 @@ void Manager::assignGoals()
 	for (NPC& npc : npcs) {
 		getNewGoal(&npc);
 	}
-	/*for (NPC& npc : npcs) {
-		
-		auto nearest = std::min_element(goals.cbegin(), goals.cend(), 
-			[start = npc.GetPosition()](const Hex& g1, const Hex& g2) 
-			{
-				return g1.DistanceTo(start) < g2.DistanceTo(start); 
-			}
-		);
-		npc.SetGoal(*nearest);
-		goals.erase(nearest);
-	}*/
 }
 
 void Manager::getNewGoal(NPC* npc)
@@ -240,11 +235,11 @@ bool Manager::allGoalsReachable()
 		return false;
 
 	for (Connexe<NPC*> coNPC : connexeNpcs) {
-		const NPC* representantNPC = *coNPC.composants.begin();
+		const NPC* representantNPC = coNPC.representant;
 		
 		bool foundAssociatedGoals = false;
 		for (Connexe<Hex> coGoals : connexeGoals) {
-			Hex representantGoal = *coGoals.composants.begin();
+			Hex representantGoal = coGoals.representant;
 			if (modele->atteignable(representantGoal, representantNPC->GetPosition())) {
 				foundAssociatedGoals = true;
 
