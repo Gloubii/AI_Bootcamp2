@@ -1,5 +1,6 @@
 #include "IOGraphe.h"
 #include <algorithm>
+#include <sstream>
 
 using namespace std;
 using namespace rapidjson;
@@ -146,6 +147,13 @@ void GraphParser::WriteJson(std::string filename)
 
 	ofstream os(filename);
 	os << buffer.GetString();
+}
+
+void GraphParser::WriteJson(int n)
+{
+	stringstream ss;
+	ss << "./OutilDebugLogs/graph2json_" << n << ".json";
+	WriteJson(ss.str());
 }
 
 rapidjson::Value GraphParser::Graph2Json() {

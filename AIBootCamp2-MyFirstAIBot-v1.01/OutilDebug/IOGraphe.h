@@ -15,6 +15,7 @@ class GraphParser {
 public:
 	GraphParser(Graph& graph);
 	void WriteJson(std::string filename = "./OutilDebugLogs/graph2json.json");
+	void WriteJson(int n);
 
 private:
 	rapidjson::Value Graph2Json();

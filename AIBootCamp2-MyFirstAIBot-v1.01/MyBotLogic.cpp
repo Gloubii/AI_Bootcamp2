@@ -53,16 +53,19 @@ void MyBotLogic::Init(const SInitData& _initData)
 	if (_initData.omniscient) {
 		BOT_LOGIC_LOG(mLogger, "omniscient", true);
 		manager.state = Manager::GOTO_GOALS;
-		manager.assignGoals();
 	}
+	manager.assignGoals();
 
 	BOT_LOGIC_LOG(mLogger, g.toString(), true);
 }
 
 void MyBotLogic::GetTurnOrders(const STurnData& _turnData, std::list<SOrder>& _orders)
 {
+	GraphParser parser(g);
+
 	BOT_LOGIC_LOG(mLogger, "GetTurnOrders", true);
 	g.Update(_turnData);
+	parser.WriteJson(_turnData.turnNb);
 	BOT_LOGIC_LOG(mLogger, "Updated graph", true);
 	manager.update();
 	BOT_LOGIC_LOG(mLogger, "Updated manager", true);

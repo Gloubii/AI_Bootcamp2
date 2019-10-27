@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <fstream>
 #include "Globals.h"
+#include <assert.h>
 
 using namespace std;
 
@@ -41,7 +42,7 @@ void Manager::addNpcToConnexite(NPC* newNpc)
 void Manager::createBasicbehaviorTree()
 {
 	for (auto& npc : npcs) {
-		npc.SetBehaviorTree("NpcABitLessBasicTree");
+		npc.SetBehaviorTree("NpcBehaviorTree");
 	}
 }
 
@@ -65,6 +66,9 @@ NPC* Manager::getOccupant(const Hex& hex)
 void Manager::assignGoals()
 {
 	for (NPC& npc : npcs) {
+		getNewGoal(&npc);
+	}
+	/*for (NPC& npc : npcs) {
 		
 		auto nearest = std::min_element(goals.cbegin(), goals.cend(), 
 			[start = npc.GetPosition()](const Hex& g1, const Hex& g2) 
@@ -74,14 +78,14 @@ void Manager::assignGoals()
 		);
 		npc.SetGoal(*nearest);
 		goals.erase(nearest);
-	}
+	}*/
 }
 
 void Manager::getNewGoal(NPC* npc)
 {
-	/*fstream file("getNewGoal.txt", ofstream::app);
+	fstream file("Manager_getNewGoal.txt", ofstream::app);
 	Hex pos = npc->GetPosition();
-	file << "from " << pos.toString() << "to ";*/
+	//file << "state " << state << " from " << pos.toString() << " to ";
 
 	if (state == EXPLORATION) {
 		// on recupere les nodes et on les trie par ordre decroissant de valeur d'exploration
@@ -96,23 +100,35 @@ void Manager::getNewGoal(NPC* npc)
 			return a.getValue() < b.getValue();
 		});
 		reverse(allNodes.begin(), allNodes.end());
+		file << "ALL NODES :" << endl;
+		for (Node n : allNodes) {
+			file << n.getTile().q << " ; " << n.getTile().r << "  :  " << n.getValue() << endl;
+		}
+		file << endl << endl;
 
 		// on conserve les nodes avec la meilleure valeur (max avec cas d'egalite)
 		int i = 1;
-		vector<Node> bestNodes;
+		vector<Node> bestNodes{ allNodes.at(0) };
 		while (i < allNodes.size() && allNodes.at(i).getValue() == allNodes.at(i - 1).getValue()) {
 			bestNodes.push_back(allNodes.at(i));
 			i++;
 		}
+		file << "BEST NODES :" << endl;
+		for (Node n : bestNodes) {
+			file << n.getTile().q << " ; " << n.getTile().r << "  :  " << n.getValue() << endl;
+		}
+		file << endl << endl;
 
 		Hex npcPosition = npc->GetPosition();
 		auto bestNode = min_element(bestNodes.begin(), bestNodes.end(), [&npcPosition](const Node& a, const Node& b) {
 			return npcPosition.DistanceTo(Hex{ a.getTile().q, a.getTile().r }) < npcPosition.DistanceTo(Hex{ b.getTile().q, b.getTile().r });
 		});
 
+		assert(bestNode != bestNodes.end());
+
 		Hex newGoal(bestNode->getTile().q, bestNode->getTile().r);
 		npc->SetGoal(newGoal);
-		//file << newGoal.toString() << endl;
+		file << "state " << state << " from " << pos.toString() << " to " << newGoal.toString() << endl << endl << endl;
 	}
 	else {
 		// state == GOTO_GOALS
