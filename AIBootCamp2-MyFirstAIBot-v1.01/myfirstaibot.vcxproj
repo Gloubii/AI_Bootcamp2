@@ -86,7 +86,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01;E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\OutilDebug\rapidjson-master\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <CompileAs>CompileAsCpp</CompileAs>
@@ -131,7 +131,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01;E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\OutilDebug\rapidjson-master\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <CompileAs>CompileAsCpp</CompileAs>
       <ExceptionHandling>Sync</ExceptionHandling>
@@ -176,7 +176,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01;E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\OutilDebug\rapidjson-master\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <CompileAs>CompileAsCpp</CompileAs>
       <ExceptionHandling>Sync</ExceptionHandling>
@@ -221,7 +221,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01;E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\OutilDebug\rapidjson-master\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <CompileAs>CompileAsCpp</CompileAs>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -332,6 +332,8 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\dllmain.cpp" />
     <ClCompile Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\Interop_API.cpp" />
     <ClCompile Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\stdafx.cpp" />
+    <ClCompile Include="OutilDebug\IOGraphe.cpp" />
+    <ClCompile Include="OutilDebug\TestGraphe.cpp" />
     <ClInclude Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\AIBot.h" />
     <ClInclude Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\BotLogicIF.h" />
     <ClInclude Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\ConfigData.h" />
@@ -352,6 +354,8 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\Interop_API.h" />
     <ClInclude Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\stdafx.h" />
     <ClInclude Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\targetver.h" />
+    <ClInclude Include="OutilDebug\IOGraphe.h" />
+    <ClInclude Include="OutilDebug\TestGraphe.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\ZERO_CHECK.vcxproj">

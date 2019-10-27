@@ -1,3 +1,1 @@
-﻿CreateMap.obj : error LNK2019: symbole externe non résolu "public: __cdecl MyBotLogic::MyBotLogic(void)" (??0MyBotLogic@@QEAA@XZ) référencé dans la fonction main
-CreateMap.obj : error LNK2019: symbole externe non résolu "public: virtual __cdecl MyBotLogic::~MyBotLogic(void)" (??1MyBotLogic@@UEAA@XZ) référencé dans la fonction "public: void __cdecl MyBotLogic::`vbase destructor'(void)" (??_DMyBotLogic@@QEAAXXZ)
-E:\AI_Bootcamp\Iteration2\git\AI_Bootcamp2\AIBootCamp2-MyFirstAIBot-v1.01\x64\Debug\CreateMap.exe : fatal error LNK1120: 2 externes non résolus
+﻿

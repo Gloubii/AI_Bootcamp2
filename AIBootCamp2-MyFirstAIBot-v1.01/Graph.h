@@ -50,6 +50,7 @@ public:
 	Hex getFrom() const;
 	Hex getTo() const;
 	float getCost() const;
+	float getCost(EObjectType& object) const ;
 	std::string toString() const;
 	EHexCellDirection toDirection() const;
 };
@@ -91,6 +92,7 @@ public:
 	bool connected(Hex n1, Hex n2, bool allConnection) const;
 	void updateValue(const Hex& n);
 	std::string afficheConvexes() const;
+	std::set<Hex> getConvexes(const Hex& start);
 
 	std::vector<Edge> aStar(const Hex& start, const Hex& finish, const bool exploration = false) const;
 

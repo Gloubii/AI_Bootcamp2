@@ -8,7 +8,11 @@
 #include "TurnData.h"
 #include "Graph.h"
 
-MyBotLogic::MyBotLogic()
+#include "OutilDebug/IOGraphe.h"
+#include "OutilDebug/TestGraphe.h"
+
+
+MyBotLogic::MyBotLogic() : g{}, manager{}
 {
 	//Write Code Here
 }
@@ -30,7 +34,6 @@ void MyBotLogic::Configure(const SConfigData& _configData)
 	//Write Code Here
 }
 
-Graph g;
 
 void MyBotLogic::Init(const SInitData& _initData)
 {
@@ -41,30 +44,36 @@ void MyBotLogic::Init(const SInitData& _initData)
 
 	//Create graph
 	g = Graph(_initData);
-
-	for (int i = 0; i < _initData.nbNPCs; ++i) {
-		manager.npcs.push_back(NPC{&manager,_initData.npcInfoArray[i], g});
-	}
-
+	
+	// Init manager
+	manager.initManager(_initData, &g);
 	manager.createBasicbehaviorTree();
 	BOT_LOGIC_LOG(mLogger, "BehaviorTree created", true);
 
-	if (_initData.omniscient || true) {
+	if (_initData.omniscient) {
 		BOT_LOGIC_LOG(mLogger, "omniscient", true);
-		//manager.goals = g.GetGoals();
-		manager.goals = { Hex{ 0, 4 } };
-		manager.assignGoals();
+		manager.state = Manager::GOTO_GOALS;
 	}
+	else {
+		manager.state = Manager::EXPLORATION;
+	}
+	manager.assignGoals();
 
 	BOT_LOGIC_LOG(mLogger, g.toString(), true);
 }
 
 void MyBotLogic::GetTurnOrders(const STurnData& _turnData, std::list<SOrder>& _orders)
 {
+	GraphParser parser(g);
+
 	BOT_LOGIC_LOG(mLogger, "GetTurnOrders", true);
 	g.Update(_turnData);
-	manager.updateNpc(_turnData);
+	parser.WriteJson(_turnData.turnNb);
 	BOT_LOGIC_LOG(mLogger, "Updated graph", true);
+	manager.update();
+	BOT_LOGIC_LOG(mLogger, "Updated manager", true);
+	manager.updateNpc(_turnData);
+	BOT_LOGIC_LOG(mLogger, "Updated npc", true);
 	for (NPC& npc : manager.npcs) {
 		npc.SetUpBlackboard();
 		BOT_LOGIC_LOG(mLogger, "Setup Blackboard", true);

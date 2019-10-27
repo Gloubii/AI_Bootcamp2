@@ -53,6 +53,17 @@ bool NPC::IsOnGoal() const
 	return GetPosition() == GetGoal();
 }
 
+void NPC::updateReachableGoals(Hex h)
+{
+	if (!isReachableGoal(h))
+		reachableGoals.push_back(h);
+}
+
+bool NPC::isReachableGoal(Hex h)
+{
+	return (std::find(reachableGoals.begin(), reachableGoals.end(), h) != reachableGoals.end());
+}
+
 void NPC::SetGoal(const Hex& hex)
 {
 	pastGoals.push_back(hex);
@@ -141,4 +152,15 @@ Task::ReturnValue NPC::TaskNextBlocked::run(BlackboardPtr blackboard)
 	auto other = m->getOccupant(e.getTo());
 	if (other) blackboard->write("other", other);
 	return other ? SUCCESS : FAILLURE;
+}
+
+Task::ReturnValue NPC::TaskGetPath::run(BlackboardPtr blackboard)
+{
+	auto p = blackboard->getValue<Path_t*>("path");
+	auto m = blackboard->getValue<Manager*>("manager");
+	auto npc = blackboard->getValue<NPC*>("npc");
+
+	*p = m->getPath(npc);
+	
+	return SUCCESS;
 }

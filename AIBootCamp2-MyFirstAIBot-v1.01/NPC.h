@@ -1,8 +1,8 @@
 #ifndef NPC_H
 #define NPC_H
 
-#include"Hex.h"
-#include"OrderPath.h"
+#include "Hex.h"
+#include "OrderPath.h"
 #include "Globals.h"
 #include "Task.h"
 #include "Graph.h"
@@ -16,7 +16,8 @@ class NPC
 
 	Hex goal;
 	std::vector<Hex> pastGoals;
-	
+	std::vector<Hex> reachableGoals;
+
 	OrderPath orderPath;
 	BehaviorTree behaviorTree;
 
@@ -40,6 +41,7 @@ public:
 	
 	Manager_t* manager;
 	
+
 	NPC(Manager_t *manager, const SNPCInfo &npcInfo, Graph &graph);
 
 	bool Update(const SNPCInfo& npcInfo);
@@ -51,6 +53,8 @@ public:
 
 	Hex GetIntention() const;
 	bool IsOnGoal() const;
+	void updateReachableGoals(Hex h);
+	bool isReachableGoal(Hex h);
 
 	void SetGoal(const Hex& hex);
 	Hex GetGoal() const;
@@ -83,14 +87,7 @@ public:
 
 	struct TaskGetPath : TaskAction 
 	{
-		ReturnValue run(BlackboardPtr blackboard) override {
-			auto p = blackboard->getValue<Path_t*>("path");
-			auto g = blackboard->getValue<Graph*>("graph");
-			auto pos = blackboard->getValue<Hex>("currentPos");
-			auto goal = blackboard->getValue<Hex>("goal");
-			*p = g->aStar(pos, goal);
-			return SUCCESS;
-		}
+		ReturnValue run(BlackboardPtr blackboard);
 
 		ClonePtr clone() override {
 			return new TaskGetPath;
@@ -191,6 +188,7 @@ public:
 		}
 	};
 };
+
 
 #endif // !NPC_H
 

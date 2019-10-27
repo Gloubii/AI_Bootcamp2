@@ -104,5 +104,11 @@
     <Filter Include="Sources">
       <UniqueIdentifier>{2D87F268-60E8-3987-9A98-CB15921902BE}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Headers\OutilDebug">
+      <UniqueIdentifier>{0a88602f-44b9-49ca-b3cc-ca9e1df59a87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\OutilDebug">
+      <UniqueIdentifier>{a59f83d0-eb21-4373-a63f-e985a5d17bff}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

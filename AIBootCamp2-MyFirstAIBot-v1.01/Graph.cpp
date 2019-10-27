@@ -14,8 +14,13 @@ string Node::toString() const
 	out.append(to_string(getTile().q));
 	out.append("	R= ");
 	out.append(to_string(getTile().r));
-	if (unknown)
+	if (unknown) {
 		out.append(" case inconnue");
+	}
+	else {
+		out.append(" valeur d'exploration ");
+		out.append(to_string(getValue()));
+	}
 	out.append("\n");
 	return out;
 }
@@ -50,6 +55,15 @@ Hex Edge::getTo() const
 
 float Edge::getCost() const
 {
+	return cost;
+}
+
+float Edge::getCost(EObjectType& object_) const
+{
+	auto cost = getCost();
+	if (cost == -1) {
+		object_ = object;
+	}
 	return cost;
 }
 
@@ -344,18 +358,22 @@ void Graph::updateValue(const Hex& n)
 	//if (nodes.at(n).isUnknown())
 	//	return 6;							// TODO : 6 or 0 ?
 	// interêt, désinterêt, abscence d'info
+
 	std::vector<Edge> connections = getAllConnections(n);
 	int nbBorder = n.NbBorder(maxRow, maxCol);
 	int nbKnown = 0;
 	int nbWindow = 0;
 	int nbWall = 0;
 	for (auto e : connections) {
-		if (e.cost != -1 && e.cost != -3)
+		if (e.cost != -1 && e.cost != -3) {
 			++nbKnown;
-		else if (e.object == EObjectType::Window)
+		}
+		else if (e.object == EObjectType::Window) {
 			++nbWindow;
-		else
+		}
+		else if (e.object == EObjectType::Wall) {
 			++nbWall;
+		}
 	}
 
 	nodes[n].value = 7 - nbBorder - nbKnown - nbWall + nbWindow;
@@ -373,6 +391,13 @@ string Graph::afficheConvexes() const
 		}
 	}
 	return out;
+}
+
+std::set<Hex> Graph::getConvexes(const Hex& start)
+{
+	auto startInConv = [start](set<Hex> graph) {return graph.count(start); };
+	auto graphS = find_if(convexes.begin(), convexes.end(), startInConv);
+	return *graphS;
 }
 
 
@@ -474,7 +499,13 @@ vector<Edge> Graph::aStar(const Hex& start, const Hex& finish, bool exploration)
 	while (current.hex_node != start) {
 		path.push_back(current.edge);
 		auto isPrec = [node = current.edge.hex_from](NodeRecord nr) {return nr.hex_node == node; };
-		current = *find_if(begin(closed), end(closed), isPrec);
+		auto it = find_if(begin(closed), end(closed), isPrec);
+		if (it != end(closed)) {
+			current = *it;
+		}
+		else {
+			current = *find_if(begin(open), end(open), isPrec);
+		}
 	}
 	reverse(begin(path), end(path));
 	//path.erase(begin(path));
