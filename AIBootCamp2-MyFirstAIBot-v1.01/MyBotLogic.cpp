@@ -74,9 +74,13 @@ void MyBotLogic::GetTurnOrders(const STurnData& _turnData, std::list<SOrder>& _o
 	BOT_LOGIC_LOG(mLogger, "Updated manager", true);
 	manager.updateNpc(_turnData);
 	BOT_LOGIC_LOG(mLogger, "Updated npc", true);
+
 	for (NPC& npc : manager.npcs) {
 		npc.SetUpBlackboard();
 		BOT_LOGIC_LOG(mLogger, "Setup Blackboard", true);
+	}
+
+	for (NPC& npc : manager.npcs) {
 		npc.RunBehaviorTree();
 		BOT_LOGIC_LOG(mLogger, "Run behavior Tree", true);
 		_orders.push_back(npc.NextOrder());
