@@ -41,7 +41,7 @@ void BehaviorTree::initBehaviorTree()
 	behaviorTreeLibrary["NpcBasicTree"] = new TaskSequence({
 		new TaskInverter{ new TaskSelector{{
 				new TaskSequence {{
-					new NPC::TaskPathEmpty,
+					new TaskInverter{ new NPC::TaskPathNonEmpty },
 					new TaskPredicate{[](Task::BlackboardPtr b) {return b->getValue<Hex>("goal") == b->getValue<Hex>("currentPos"); }},
 					new NPC::TaskWait
 				}},
@@ -57,7 +57,7 @@ void BehaviorTree::initBehaviorTree()
 
 	behaviorTreeLibrary["NpcGetPathOrWait"] = new TaskSequence{{
 			new TaskInverter{ new TaskSequence {{
-				new NPC::TaskPathEmpty,
+				new TaskInverter{ new NPC::TaskPathNonEmpty },
 				new TaskPredicate{[](Task::BlackboardPtr b) {return b->getValue<NPC*>("npc")->IsOnGoal(); }},
 				new NPC::TaskWait
 			}} },
@@ -103,9 +103,9 @@ void BehaviorTree::initBehaviorTree()
 			}}
 	});
 
-	behaviorTreeLibrary["NpcGetPath"] = new TaskSequence{ {
-			new TaskInverter{ new TaskSequence {{
-				new NPC::TaskPathEmpty,
+	behaviorTreeLibrary["NpcGetPath"] = new TaskSelector{{
+			new NPC::TaskPathNonEmpty,
+			new TaskFaillure{ new TaskSequence {{
 				new TaskPredicate{[](Task::BlackboardPtr b) {return b->getValue<NPC*>("npc")->IsOnGoal(); }},
 				new TaskBasicAction{[](Task::BlackboardPtr b) {
 						auto npc = b->getValue<NPC*>("npc");
@@ -115,10 +115,10 @@ void BehaviorTree::initBehaviorTree()
 			}} },
 			new TaskInverter{ new TaskSequence{{
 					new NPC::TaskGetPath,
-					new TaskPredicate{[](Task::BlackboardPtr b) {return !b->getValue<NPC::Path_t*>("path")->size(); }},
+					new TaskInverter{ new NPC::TaskPathNonEmpty },
 					new NPC::TaskWait
 			}} }
-	} };
+	}};
 
 	behaviorTreeLibrary["NpcBehaviorTree"] = new TaskSequence({
 			new SubTreeReference("NpcGetPath"),

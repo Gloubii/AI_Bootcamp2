@@ -19,6 +19,9 @@ void Manager::initManager(SInitData initData, Graph* modele_)
 	for (int i = 0; i < initData.nbNPCs; i++) {
 		addNpcToConnexite(i);
 	}
+	for (auto& g : goals) {
+		addGoalToConnexite(g);
+	}
 }
 
 void Manager::addNpcToConnexite(int id)
@@ -43,6 +46,17 @@ void Manager::addNpcToConnexite(int id)
 		itConnexe->composants.insert(&newNpc);
 	}
 
+}
+
+void Manager::addGoalToConnexite(const Hex& goal)
+{
+	auto itConnex = find_if(begin(connexeGoals), end(connexeGoals), [&](const Connexe<Hex>& c) { return modele->atteignable(c.representant, goal); });
+	if (itConnex == connexeGoals.end()) {
+		connexeGoals.emplace_back(goal);
+	}
+	else {
+		itConnex->composants.insert(goal);
+	}
 }
 
 void Manager::createBasicbehaviorTree()
@@ -128,8 +142,9 @@ void Manager::getNewGoal(NPC* npc)
 	else {
 		// state == GOTO_GOALS
 		vector<Hex> npcTakenGoals;
-		for (NPC& npc : npcs) {
-			npcTakenGoals.push_back(npc.GetGoal());
+		for (NPC& otherNpc : npcs) {
+			if (otherNpc != *npc)
+				npcTakenGoals.push_back(otherNpc.GetGoal());
 		}
 
 		// recuperation des goals connexes
@@ -160,7 +175,14 @@ vector<Edge> Manager::getPath(NPC* npc)
 
 void Manager::update()
 {
-	goals = modele->GetGoals();
+	auto futureGoals = modele->GetGoals();
+	if (futureGoals.size() > goals.size()) {
+		goals = futureGoals;
+		for (auto& g : goals) {
+			addGoalToConnexite(g);
+		}
+	}
+	
 	updateConnexite();
 	updateState();
 }

@@ -145,6 +145,16 @@ bool NPC::operator<(const NPC& npc) const
 	return uid < npc.uid;
 }
 
+bool NPC::operator==(const NPC& npc) const
+{
+	return uid == npc.uid;
+}
+
+bool NPC::operator!=(const NPC& npc) const
+{
+	return !(*this == npc);
+}
+
 Task::ReturnValue NPC::TaskNextBlocked::run(BlackboardPtr blackboard)
 {
 	auto e = blackboard->getValue<Path_t*>("path")->front();

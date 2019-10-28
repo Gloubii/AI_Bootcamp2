@@ -220,6 +220,9 @@ bool Graph::Update(const STurnData& turnData)
 			Node& n = nodes.at(Hex(turnData.tileInfoArray[i].q, turnData.tileInfoArray[i].r));
 			if (n.isUnknown()) {
 				nodes.insert_or_assign(Hex{ turnData.tileInfoArray[i].q, turnData.tileInfoArray[i].r }, Node(turnData.tileInfoArray[i]));
+				if (turnData.tileInfoArray[i].type == Goal) {
+					goals.push_back(Hex{ turnData.tileInfoArray[i].q, turnData.tileInfoArray[i].r });
+				}
 			}
 		}
 	}

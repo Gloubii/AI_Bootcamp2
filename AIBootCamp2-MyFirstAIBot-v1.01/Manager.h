@@ -42,6 +42,7 @@ public:
 
 	void initManager(SInitData initData, Graph* modele_);
 	void addNpcToConnexite(int id);
+	void addGoalToConnexite(const Hex& goal);
 	void createBasicbehaviorTree();
 	void updateNpc(const STurnData& _turnData);
 	bool isOccuped(const Hex& hex);

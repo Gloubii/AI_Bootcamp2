@@ -71,17 +71,18 @@ public:
 	void RunBehaviorTree();
 
 	bool operator< (const NPC& npc) const;
+	bool operator== (const NPC& npc) const;
+	bool operator!= (const NPC& npc) const;
 
 
 
-
-	struct TaskPathEmpty : TaskCondition {
+	struct TaskPathNonEmpty : TaskCondition {
 		ReturnValue run(BlackboardPtr blackboard) override {
-			return blackboard->getValue<Path_t*>("path")->size() ? FAILLURE : SUCCESS;
+			return blackboard->getValue<Path_t*>("path")->size() ? SUCCESS : FAILLURE;
 		}
 
 		ClonePtr clone() override {
-			return new TaskPathEmpty();
+			return new TaskPathNonEmpty();
 		}
 	};
 
