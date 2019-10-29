@@ -80,6 +80,11 @@ void NPC::AskNewGoal()
 	manager->getNewGoal(this);
 }
 
+void NPC::ClearPath()
+{
+	path.clear();
+}
+
 std::vector<Hex> NPC::GetPastGoals() const
 {
 	return pastGoals;

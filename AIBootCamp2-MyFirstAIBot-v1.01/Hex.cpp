@@ -12,6 +12,22 @@ Hex::Hex(int x, int y, int z) : x{x}, y{y}, z{z}
 {
 }
 
+Hex& Hex::operator=(const Hex& hex)
+{
+	x = hex.x;
+	y = hex.y;
+	z = hex.z;
+	return *this;
+}
+
+Hex& Hex::operator=(Hex&& hex)
+{
+	x = hex.x;
+	y = hex.y;
+	z = hex.z;
+	return *this;
+}
+
 void Hex::GetAxial(int& q, int& r) const
 {
 	q = x;

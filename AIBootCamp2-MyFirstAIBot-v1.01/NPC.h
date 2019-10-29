@@ -59,6 +59,7 @@ public:
 	void SetGoal(const Hex& hex);
 	Hex GetGoal() const;
 	void AskNewGoal();
+	void ClearPath();
 
 	std::vector<Hex> GetPastGoals() const;
 

@@ -141,6 +141,34 @@ void Graph::addToConvexes(const Hex& hex)
 	}
 }
 
+void Graph::separerConnexe(const Hex& hex, const Hex& voisin)
+{
+	set<Hex> newSet{ hex };
+	set<Hex> pile;
+	for (Edge hEdge : getConnections(hex)) {
+		pile.insert(hEdge.getTo());
+	}
+	while (pile.size()) {
+		Hex hVoisin = *pile.begin();
+		newSet.insert(hVoisin);
+		pile.erase(hVoisin);
+		for (Edge hEdge : getConnections(hVoisin)) {
+			if (!newSet.count(hEdge.getTo()))
+				pile.insert(hEdge.getTo());
+		}
+	}
+
+	auto InConv = [voisin](set<Hex> graph) {return graph.count(voisin); };
+	auto graph = find_if(convexes.begin(), convexes.end(), InConv);
+	if (graph != convexes.end()) {
+		for (Hex h : newSet)
+			graph._Ptr->erase(h);
+		convexes.push_back(newSet);
+	}
+	
+
+}
+
 
 Graph::Graph(const SInitData& initData) : maxRow(initData.rowCount), maxCol(initData.colCount)
 {
@@ -206,6 +234,10 @@ Graph::Graph(const SInitData& initData) : maxRow(initData.rowCount), maxCol(init
 
 bool Graph::Update(const STurnData& turnData)
 {
+	vector<Hex> npcs;
+	for (int i = 0; i < turnData.npcInfoArraySize; ++i)
+		npcs.push_back(Hex{ turnData.npcInfoArray[i].q, turnData.npcInfoArray[i].r });
+
 	std::vector<Hex> changed;
 	// add nodes
 	for (int i = 0; i < turnData.tileInfoArraySize; ++i) {
@@ -266,31 +298,51 @@ bool Graph::Update(const STurnData& turnData)
 					}
 				}
 				// edges of normal tiles
-				if (be_edgy) {
-					EObjectType object;
-					auto isWall = [hex, voisin, dir, &object](SObjectInfo objet) {
-						if (!((objet.q == hex.x && objet.r == hex.y && objet.cellPosition == dir) ||
-							(objet.q == voisin.x && objet.r == voisin.y && objet.cellPosition == ((dir + 3) % 6))))
-							return false;
-						object = (EObjectType)objet.types[objet.typesSize - 1];
-						return true; };
-					if (find_if(begin(objects), end(objects), isWall) == end(objects)) {
-						if (nodes.at(hex).getTile().type == Forbidden || nodes.at(voisin).getTile().type == Forbidden)
-							edges.push_back(Edge(hex, voisin, -2));		// Connection to/from a red tile
-						else if (nodes.at(hex).isUnknown() || nodes.at(voisin).isUnknown())
-							edges.push_back(Edge(hex, voisin, -3));		// Connection to/from an unknown tile
-						else {
-							edges.push_back(Edge(hex, voisin, 1));		// Normal connection used by the pathfinding
-							addToConvexes(hex, voisin);
+				EObjectType object;
+				auto isWall = [hex, voisin, dir, &object](SObjectInfo objet) {
+					if (!((objet.q == hex.x && objet.r == hex.y && objet.cellPosition == dir) ||
+						(objet.q == voisin.x && objet.r == voisin.y && objet.cellPosition == ((dir + 3) % 6))))
+						return false;
+					object = (EObjectType)objet.types[objet.typesSize - 1];
+					return true; };
+				bool wallfound = find_if(begin(objects), end(objects), isWall) != end(objects);
+				if (!wallfound && be_edgy) {
+					bool map50 = false;
+					for (Hex h50 : npcs) {
+						map50 = map50 || h50 == hex;
+					}
+					if (nodes.at(hex).getTile().type == Forbidden || nodes.at(voisin).getTile().type == Forbidden)
+						edges.push_back(Edge(hex, voisin, -2));		// Connection to/from a red tile
+					else if (nodes.at(hex).isUnknown() || nodes.at(voisin).isUnknown()) {
+						if (map50) {
+							nodes[voisin].tile.type = Forbidden;
+							nodes[voisin].unknown = false;
 						}
+						else
+							edges.push_back(Edge(hex, voisin, -3));		// Connection to/from an unknown tile
 					}
 					else {
-						edges.push_back(Edge(hex, voisin, -1, object));	// Connection with an object between the two tiles.
-						if (object == EObjectType::Window && nodes.at(hex).getTile().type != Forbidden) {
-							addToConvexes(hex);
-						}
+						edges.push_back(Edge(hex, voisin, 1));		// Normal connection used by the pathfinding
+						addToConvexes(hex, voisin);
 					}
 				}
+				else if (wallfound) {
+					if (be_edgy) {
+						edges.push_back(Edge(hex, voisin, -1, object));	// Connection with an object between the two tiles.
+						if (object == EObjectType::Window && nodes.at(hex).getTile().type != Forbidden)
+							addToConvexes(hex);
+					} else if (e1._Ptr->cost > 0) {
+						edges.erase(e1);
+						edges.push_back(Edge(hex, voisin, -1, object));
+						auto isFinishEdge = [hex, voisin](Edge e) {return e.getFrom() == voisin && e.getTo() == hex; };
+						e1 = find_if(begin(edges), end(edges), isFinishEdge);
+						edges.erase(e1);
+						edges.push_back(Edge(voisin, hex, -1, object));
+						separerConnexe(hex, voisin);
+					}
+					
+				}
+				
 			}
 		}
 	}
@@ -371,10 +423,10 @@ void Graph::updateValue(const Hex& n)
 		if (e.cost != -1 && e.cost != -3) {
 			++nbKnown;
 		}
-		else if (e.object == EObjectType::Window) {
+		else if (e.object == EObjectType::Window && nodes[e.getTo()].isUnknown()) {
 			++nbWindow;
 		}
-		else if (e.object == EObjectType::Wall) {
+		else if (e.object == EObjectType::Wall || e.object == EObjectType::Window) {
 			++nbWall;
 		}
 	}

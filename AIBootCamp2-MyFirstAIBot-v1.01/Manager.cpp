@@ -17,21 +17,21 @@ void Manager::initManager(SInitData initData, Graph* modele_)
 		npcs.push_back(NPC{ this,initData.npcInfoArray[i], *modele_ });
 	}
 	for (int i = 0; i < initData.nbNPCs; i++) {
-		addNpcToConnexite(i);
+		addNpcToConnexite(&npcs[i]);
 	}
 	for (auto& g : goals) {
 		addGoalToConnexite(g);
 	}
 }
 
-void Manager::addNpcToConnexite(int id)
+void Manager::addNpcToConnexite(NPC* newNPC)
 {
-	NPC& newNpc = npcs.at(id);
+	
 
 	// Ajout du npc dans les composantes connexes
 	auto itConnexe = find_if(connexeNpcs.begin(), connexeNpcs.end(), [&](const Connexe<NPC*>& c) {
 		NPC* representant = c.representant;
-		return modele->atteignable(representant->GetPosition(), newNpc.GetPosition());
+		return modele->atteignable(representant->GetPosition(), newNPC->GetPosition());
 	});
 
 	if (itConnexe == connexeNpcs.end()) {
@@ -39,11 +39,11 @@ void Manager::addNpcToConnexite(int id)
 		// on en construit une nouvelle
 		//Connexe<NPC*> newConnexite;
 		//newConnexite.composants.insert(newNpc);
-		connexeNpcs.emplace_back(&newNpc);
+		connexeNpcs.emplace_back(newNPC);
 	}
 	else {
 		// sinon, on ajoute le nouvel npc aux npcs de sa composante connexe
-		itConnexe->composants.insert(&newNpc);
+		itConnexe->composants.insert(newNPC);
 	}
 
 }
@@ -83,6 +83,8 @@ NPC* Manager::getOccupant(const Hex& hex)
 	return p != end(npcs) ? &*p : nullptr;
 }
 
+
+
 void Manager::assignGoals()
 {
 	for (NPC& npc : npcs) {
@@ -105,8 +107,28 @@ void Manager::getNewGoal(NPC* npc)
 		};
 		for_each(connexes.begin(), connexes.end(), toNode);
 
-		sort(allNodes.begin(), allNodes.end(), [](Node a, Node b) {
-			return a.getValue() < b.getValue();
+		//float delta = sqrt(pow(modele->maxRow, 2) + pow(modele->maxCol, 2)) / 3.14f;
+		sort(allNodes.begin(), allNodes.end(), [&](Node a, Node b) {
+			Hex npcPosition = npc->GetPosition();
+			float d1 = npcPosition.DistanceTo(Hex(a.getTile().q, a.getTile().r));
+			float d2 = npcPosition.DistanceTo(Hex(b.getTile().q, b.getTile().r));
+			//float m = a.getValue() + b.getValue();
+			//auto dm = d1 + d2;
+			if (a.getValue() == 1 && b.getValue() == 1)
+				return false;
+			if (a.getValue() == 1)
+				return true;
+			if (b.getValue() == 1)
+				return false;
+
+			if (d1 > npc->GetVisionRange() && d2 > npc->GetVisionRange())
+				return d2 < d1;
+			if (d1 > npc->GetVisionRange())
+				return true;
+			if (d2 > npc->GetVisionRange())
+				return false;
+
+			return a.getValue() > b.getValue();
 		});
 		reverse(allNodes.begin(), allNodes.end());
 		file << "ALL NODES :" << endl;
@@ -200,15 +222,32 @@ void Manager::updateState()
 	case Manager::EXPLORATION:
 		if (allGoalsReachable()) {
 			state = GOTO_GOALS;
+			for (auto& npc : npcs) {
+				npc.ClearPath();
+				npc.AskNewGoal();
+			}
 		}
 		break;
 
 	case Manager::GOTO_GOALS:
 		// etat final
+		
 		break;
 
 	default:
 		break;
+	}
+}
+
+void Manager::separerConnexite() {
+	connexeGoals.clear();
+	connexeNpcs.clear();
+
+	for (int i = 0; i < npcs.size(); i++) {
+		addNpcToConnexite(&npcs[i]);
+	}
+	for (auto& g : goals) {
+		addGoalToConnexite(g);
 	}
 }
 
@@ -249,6 +288,29 @@ void Manager::updateConnexite()
 			i++;
 		}
 	}
+}
+
+void Manager::verifyConexite()
+{/*
+	for (auto &connex : connexeGoals) {
+		auto it = remove_if(begin(connex.composants),
+			end(connex.composants),
+			[&](const Hex &g) {
+				return !modele->atteignable(connex.representant, g);
+			});
+		//for_each(it, end(connex.composants), [&](auto g) {addGoalToConnexite(g); });
+		//connex.composants.erase(it, end(connex.composants));
+	}
+	for (auto& connex : connexeNpcs) {
+		auto it = remove_if(begin(connex.composants),
+			end(connex.composants),
+			[&](NPC* npc) {
+				return !modele->atteignable(connex.representant->GetPosition(), npc->GetPosition());
+			});
+		for_each(it, end(connex.composants), [&](NPC* npc) {addNpcToConnexite(npc); });
+		connex.composants.erase(it, end(connex.composants));
+	}
+	state = ManagerState::EXPLORATION;*/
 }
 
 bool Manager::allGoalsReachable()

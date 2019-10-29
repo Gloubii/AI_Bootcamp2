@@ -1,5 +1,6 @@
 #include "Task.h"
 #include "NPC.h"
+#include "Manager.h"
 
 std::unordered_map<BehaviorTree::BehaviorTreeKey, BehaviorTree::ClonePtr> BehaviorTree::behaviorTreeLibrary;
 
@@ -111,7 +112,7 @@ void BehaviorTree::initBehaviorTree()
 						auto npc = b->getValue<NPC*>("npc");
 						npc->AskNewGoal();
 						b->overwrite("goal", npc->GetGoal());
-				} }
+				}}
 			}} },
 			new TaskInverter{ new TaskSequence{{
 					new NPC::TaskGetPath,
@@ -123,6 +124,27 @@ void BehaviorTree::initBehaviorTree()
 	behaviorTreeLibrary["NpcBehaviorTree"] = new TaskSequence({
 			new SubTreeReference("NpcGetPath"),
 			new TaskSequence{{
+				new TaskSelector {{
+						new TaskPredicate {[](Task::BlackboardPtr b) { //Check if the goal is atteignable
+							auto npc = b->getValue<NPC*>("npc");
+							auto next = b->getValue<NPC::Path_t*>("path")->front().getTo();
+							auto connexions = b->getValue<Graph*>("graph")->getConnections(npc->GetPosition());
+							return std::find_if(begin(connexions), end(connexions), [next](Edge& e) {return e.getTo() == next; }) != end(connexions);
+						}},
+						new TaskSequence {{new TaskBasicAction{[](Task::BlackboardPtr b) {
+								auto npc = b->getValue<NPC*>("npc");
+								b->getValue<NPC::Manager_t*>("manager")->separerConnexite();
+								b->getValue<NPC::Manager_t*>("manager")->state = Manager::EXPLORATION;
+								npc->AskNewGoal();
+								b->overwrite("goal", npc->GetGoal());
+							}},
+							new NPC::TaskGetPath,
+							new TaskInverter {new TaskSequence {{
+								new TaskInverter{ new NPC::TaskPathNonEmpty },
+								new NPC::TaskWait
+							}} }
+						}}
+				}},
 				new TaskInverter{ new TaskSequence {{
 						new NPC::TaskNextBlocked,
 						new SubTreeReference("NpcPathBlockedReaction")

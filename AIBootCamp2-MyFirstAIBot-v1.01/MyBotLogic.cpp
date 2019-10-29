@@ -44,6 +44,9 @@ void MyBotLogic::Init(const SInitData& _initData)
 
 	//Create graph
 	g = Graph(_initData);
+
+	GraphParser parser(g);
+	parser.WriteJson();
 	
 	// Init manager
 	manager.initManager(_initData, &g);

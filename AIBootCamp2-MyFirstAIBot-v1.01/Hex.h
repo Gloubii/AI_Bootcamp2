@@ -20,6 +20,10 @@ public:
 	Hex(int q, int r);
 	Hex(int x, int y, int z);
 
+	Hex(const Hex& hex) = default;
+	Hex& operator= (const Hex& hex);
+	Hex& operator= (Hex&& hex);
+
 	void GetAxial(int& q, int& r) const;
 	int DistanceTo(const Hex hex) const;
 	int NbBorder(int maxQ, int maxR) const;

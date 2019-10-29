@@ -70,6 +70,9 @@ class Graph
 	};
 
 public:
+	int maxRow;
+	int maxCol;
+
 	Graph() = default;
 	Graph(const SInitData& initData);
 
@@ -104,11 +107,10 @@ private:
 	std::vector<Edge> edges;
 	std::vector<Hex> goals;
 	std::vector<std::set<Hex>> convexes;
-	int maxRow;
-	int maxCol;
 
 	void creerConvexes();
 	void addToConvexes(const Hex& start, const Hex& finish);
 	void addToConvexes(const Hex& hex);
+	void separerConnexe(const Hex& hex, const Hex& voisin);
 };
 
