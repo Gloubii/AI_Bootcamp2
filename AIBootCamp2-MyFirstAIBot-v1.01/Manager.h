@@ -34,7 +34,7 @@ public:
 	enum ManagerState { INIT, EXPLORATION, GOTO_GOALS };
 
 	Graph* modele;
-	std::vector<NPC> npcs;
+	std::vector<NPC*> npcs;
 	std::vector<Hex> goals;
 	std::vector<Hex> tempGoals;
 	ManagerState state = INIT;
@@ -55,5 +55,11 @@ public:
 	void getNewGoal(NPC* npc);
 	std::vector<Edge> getPath(NPC* npc);
 	void update();
+
+	~Manager() {
+		for (auto n : npcs) {
+			delete n;
+		}
+	}
 };
 

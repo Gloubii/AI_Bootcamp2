@@ -14,10 +14,12 @@ void Manager::initManager(SInitData initData, Graph* modele_)
 
 	// recuperation des npcs
 	for (int i = 0; i < initData.nbNPCs; ++i) {
-		npcs.push_back(NPC{ this,initData.npcInfoArray[i], *modele_ });
+		//npcs.push_back(NPC{ this,initData.npcInfoArray[i], *modele_ });
+		auto npc = new NPC(this, initData.npcInfoArray[i], *modele_);
+		npcs.push_back(npc);
 	}
 	for (int i = 0; i < initData.nbNPCs; i++) {
-		addNpcToConnexite(&npcs[i]);
+		addNpcToConnexite(npcs[i]);
 	}
 	for (auto& g : goals) {
 		addGoalToConnexite(g);
@@ -62,39 +64,39 @@ void Manager::addGoalToConnexite(const Hex& goal)
 void Manager::createBasicbehaviorTree()
 {
 	for (auto& npc : npcs) {
-		npc.SetBehaviorTree("NpcBehaviorTree");
+		npc->SetBehaviorTree("NpcBehaviorTree");
 	}
 }
 
 void Manager::updateNpc(const STurnData& _turnData)
 {
 	for (int i = 0; i < _turnData.npcInfoArraySize; ++i) {
-		npcs[i].Update(_turnData.npcInfoArray[i]);
+		npcs[i]->Update(_turnData.npcInfoArray[i]);
 	}
 }
 
 bool Manager::isOccuped(const Hex& hex){
-	return std::find_if(begin(npcs), end(npcs), [hex](auto &npc) {return npc.GetPosition() == hex; }) != end(npcs);
+	return std::find_if(begin(npcs), end(npcs), [hex](auto npc) {return npc->GetPosition() == hex; }) != end(npcs);
 }
 
 NPC* Manager::getOccupant(const Hex& hex)
 {
-	auto p = std::find_if(begin(npcs), end(npcs), [hex](auto& npc) {return npc.GetPosition() == hex; });
-	return p != end(npcs) ? &*p : nullptr;
+	auto p = std::find_if(begin(npcs), end(npcs), [hex](auto npc) {return npc->GetPosition() == hex; });
+	return p != end(npcs) ? *p : nullptr;
 }
 
 
 
 void Manager::assignGoals()
 {
-	for (NPC& npc : npcs) {
-		getNewGoal(&npc);
+	for (NPC* npc : npcs) {
+		getNewGoal(npc);
 	}
 }
 
 void Manager::getNewGoal(NPC* npc)
 {
-	fstream file("Manager_getNewGoal.txt", ofstream::app);
+	
 	Hex pos = npc->GetPosition();
 	//file << "state " << state << " from " << pos.toString() << " to ";
 
@@ -131,11 +133,6 @@ void Manager::getNewGoal(NPC* npc)
 			return a.getValue() > b.getValue();
 		});
 		reverse(allNodes.begin(), allNodes.end());
-		file << "ALL NODES :" << endl;
-		for (Node n : allNodes) {
-			file << n.getTile().q << " ; " << n.getTile().r << "  :  " << n.getValue() << endl;
-		}
-		file << endl << endl;
 
 		// on conserve les nodes avec la meilleure valeur (max avec cas d'egalite)
 		int i = 1;
@@ -144,11 +141,6 @@ void Manager::getNewGoal(NPC* npc)
 			bestNodes.push_back(allNodes.at(i));
 			i++;
 		}
-		file << "BEST NODES :" << endl;
-		for (Node n : bestNodes) {
-			file << n.getTile().q << " ; " << n.getTile().r << "  :  " << n.getValue() << endl;
-		}
-		file << endl << endl;
 
 		Hex npcPosition = npc->GetPosition();
 		auto bestNode = min_element(bestNodes.begin(), bestNodes.end(), [&npcPosition](const Node& a, const Node& b) {
@@ -159,14 +151,13 @@ void Manager::getNewGoal(NPC* npc)
 
 		Hex newGoal(bestNode->getTile().q, bestNode->getTile().r);
 		npc->SetGoal(newGoal);
-		file << "state " << state << " from " << pos.toString() << " to " << newGoal.toString() << endl << endl << endl;
 	}
 	else {
 		// state == GOTO_GOALS
 		vector<Hex> npcTakenGoals;
-		for (NPC& otherNpc : npcs) {
-			if (otherNpc != *npc)
-				npcTakenGoals.push_back(otherNpc.GetGoal());
+		for (NPC* otherNpc : npcs) {
+			if (otherNpc != npc)
+				npcTakenGoals.push_back(otherNpc->GetGoal());
 		}
 
 		// recuperation des goals connexes
@@ -223,8 +214,8 @@ void Manager::updateState()
 		if (allGoalsReachable()) {
 			state = GOTO_GOALS;
 			for (auto& npc : npcs) {
-				npc.ClearPath();
-				npc.AskNewGoal();
+				npc->ClearPath();
+				npc->AskNewGoal();
 			}
 		}
 		break;
@@ -244,7 +235,7 @@ void Manager::separerConnexite() {
 	connexeNpcs.clear();
 
 	for (int i = 0; i < npcs.size(); i++) {
-		addNpcToConnexite(&npcs[i]);
+		addNpcToConnexite(npcs[i]);
 	}
 	for (auto& g : goals) {
 		addGoalToConnexite(g);

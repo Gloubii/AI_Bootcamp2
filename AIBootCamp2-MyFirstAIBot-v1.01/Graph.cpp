@@ -420,13 +420,13 @@ void Graph::updateValue(const Hex& n)
 	int nbWindow = 0;
 	int nbWall = 0;
 	for (auto e : connections) {
-		if (e.cost != -1 && e.cost != -3) {
+		if (e.cost !=-1  && e.cost != -3) {
 			++nbKnown;
 		}
-		else if (e.object == EObjectType::Window && nodes[e.getTo()].isUnknown()) {
+		else if (e.cost == -1 && e.object == EObjectType::Window && nodes[e.getTo()].isUnknown()) {
 			++nbWindow;
 		}
-		else if (e.object == EObjectType::Wall || e.object == EObjectType::Window) {
+		else if (e.cost == -1 && e.object == EObjectType::Wall || e.object == EObjectType::Window) {
 			++nbWall;
 		}
 	}

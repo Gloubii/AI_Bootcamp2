@@ -1,7 +1,7 @@
 #include "NPC.h"
 #include "Manager.h"
 
-NPC::NPC(Manager_t *manager, const SNPCInfo& npcInfo, Graph& graph) : manager{ manager }, uid { npcInfo.uid }, position{ Hex{npcInfo.q, npcInfo.r} }, visionRange{ npcInfo.visionRange }, graph{ graph }, blackboard{new Blackboard<Task::BlackboardKey>}
+NPC::NPC(Manager_t* manager, const SNPCInfo& npcInfo, Graph& graph) : manager{ manager }, uid{ npcInfo.uid }, position{ Hex{npcInfo.q, npcInfo.r} }, visionRange{ npcInfo.visionRange }, graph{ graph }, blackboard{ new Blackboard<Task::BlackboardKey> }, goal{}, moved{}
 {
 
 }

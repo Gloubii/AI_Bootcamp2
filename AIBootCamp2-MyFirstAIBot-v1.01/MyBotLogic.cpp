@@ -8,10 +8,6 @@
 #include "TurnData.h"
 #include "Graph.h"
 
-#include "OutilDebug/IOGraphe.h"
-#include "OutilDebug/TestGraphe.h"
-
-
 MyBotLogic::MyBotLogic() : g{}, manager{}
 {
 	//Write Code Here
@@ -19,6 +15,7 @@ MyBotLogic::MyBotLogic() : g{}, manager{}
 
 MyBotLogic::~MyBotLogic()
 {
+	BehaviorTree::clearBehaviorTree();
 	//Write Code Here
 }
 
@@ -44,9 +41,6 @@ void MyBotLogic::Init(const SInitData& _initData)
 
 	//Create graph
 	g = Graph(_initData);
-
-	GraphParser parser(g);
-	parser.WriteJson();
 	
 	// Init manager
 	manager.initManager(_initData, &g);
@@ -67,26 +61,24 @@ void MyBotLogic::Init(const SInitData& _initData)
 
 void MyBotLogic::GetTurnOrders(const STurnData& _turnData, std::list<SOrder>& _orders)
 {
-	GraphParser parser(g);
 
 	BOT_LOGIC_LOG(mLogger, "GetTurnOrders", true);
 	g.Update(_turnData);
-	parser.WriteJson(_turnData.turnNb);
 	BOT_LOGIC_LOG(mLogger, "Updated graph", true);
 	manager.update();
 	BOT_LOGIC_LOG(mLogger, "Updated manager", true);
 	manager.updateNpc(_turnData);
 	BOT_LOGIC_LOG(mLogger, "Updated npc", true);
 
-	for (NPC& npc : manager.npcs) {
-		npc.SetUpBlackboard();
+	for (NPC* npc : manager.npcs) {
+		npc->SetUpBlackboard();
 		BOT_LOGIC_LOG(mLogger, "Setup Blackboard", true);
 	}
 
-	for (NPC& npc : manager.npcs) {
-		npc.RunBehaviorTree();
+	for (NPC* npc : manager.npcs) {
+		npc->RunBehaviorTree();
 		BOT_LOGIC_LOG(mLogger, "Run behavior Tree", true);
-		_orders.push_back(npc.NextOrder());
+		_orders.push_back(npc->NextOrder());
 		BOT_LOGIC_LOG(mLogger, "push back order", true);
 	}
 }

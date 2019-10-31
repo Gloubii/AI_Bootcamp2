@@ -14,7 +14,6 @@
 #else
 #define BOT_LOGIC_LOG(logger, text, autoEndLine) 0
 #endif
-
 struct SConfigData;
 struct STurnData;
 

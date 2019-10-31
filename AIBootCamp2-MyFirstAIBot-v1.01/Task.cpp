@@ -65,7 +65,7 @@ void BehaviorTree::initBehaviorTree()
 			new TaskFaillure{ new TaskUntilFail{ new TaskSequence{{
 					new NPC::TaskGetPath,
 					new TaskPredicate{[](Task::BlackboardPtr b) {return !b->getValue<NPC::Path_t*>("path")->size(); }},
-					new TaskBasicAction{[](Task::BlackboardPtr b) {
+					new TaskBasicAction{[](Task::BlackboardPtr b) { // Ask a new goal
 							auto npc = b->getValue<NPC*>("npc");
 							npc->AskNewGoal();
 							b->overwrite("goal", npc->GetGoal());
@@ -93,7 +93,7 @@ void BehaviorTree::initBehaviorTree()
 			new NPC::TaskWait
 	} };
 
-	behaviorTreeLibrary["NpcABitLessBasicTree"] = new TaskSequence({
+	behaviorTreeLibrary["NpcBasicTree"] = new TaskSequence({
 			new SubTreeReference("NpcGetPathOrWait"),
 			new TaskSequence{{
 				new TaskInverter{ new TaskSequence {{
@@ -125,7 +125,7 @@ void BehaviorTree::initBehaviorTree()
 			new SubTreeReference("NpcGetPath"),
 			new TaskSequence{{
 				new TaskSelector {{
-						new TaskPredicate {[](Task::BlackboardPtr b) { //Check if the goal is atteignable
+						new TaskPredicate {[](Task::BlackboardPtr b) { //Check if the next hex is atteignable
 							auto npc = b->getValue<NPC*>("npc");
 							auto next = b->getValue<NPC::Path_t*>("path")->front().getTo();
 							auto connexions = b->getValue<Graph*>("graph")->getConnections(npc->GetPosition());
@@ -152,6 +152,13 @@ void BehaviorTree::initBehaviorTree()
 				new NPC::TaskMove
 			}}
 		});
+}
+
+void BehaviorTree::clearBehaviorTree()
+{
+	for (auto it = begin(behaviorTreeLibrary); it != end(behaviorTreeLibrary); ++it) {
+		delete it->second;
+	}
 }
 
 

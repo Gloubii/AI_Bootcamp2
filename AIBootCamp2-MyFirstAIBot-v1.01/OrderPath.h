@@ -16,7 +16,7 @@ public:
 	OrderPath() = default;
 
 	void AddOrder(SOrder order);
-	const SOrder& NextOrder();
+	SOrder NextOrder();
 	std::string toString();
 };
 

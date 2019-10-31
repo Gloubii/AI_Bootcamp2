@@ -7,7 +7,7 @@ void OrderPath::AddOrder(SOrder order)
 	path.push_back(order);
 }
 
-const SOrder& OrderPath::NextOrder()
+SOrder OrderPath::NextOrder()
 {
 	if (path.empty()) {
 		throw std::exception("No next order");

@@ -22,6 +22,7 @@ struct BehaviorTree : std::unique_ptr<Task>
 	static std::unordered_map<BehaviorTreeKey, Task*> behaviorTreeLibrary;
 	static BehaviorTree createBehaviorTree(BehaviorTreeKey key);
 	static void initBehaviorTree();
+	static void clearBehaviorTree();
 };
 
 class Task

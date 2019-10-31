@@ -146,49 +146,6 @@ public:
 		}
 	};
 
-	struct TaskComputeIntermediateGoal : TaskAction
-	{
-
-		int lerp(float x, float y, float t) {
-			return x + (y - x) * t;
-		}
-
-		ReturnValue run(BlackboardPtr blackboard) override {
-			auto pos = blackboard->getValue<Hex>("currentPos");
-			auto goal = blackboard->getValue<Hex>("goal");
-			auto g = blackboard->getValue<Graph*>("graph");
-			int distance = pos.DistanceTo(goal);
-			float t = 1.0f / distance;
-			float factor = 6 * t;
-			for (int i = distance-1; i >= 0; --i) {
-				Hex center = Hex{ lerp(pos.x, goal.x, i * t), lerp(pos.y, goal.y, i * t), lerp(pos.z, goal.z, i * t) };
-				
-				if (g->Contains(center) && g->getNode(center).getValue() >= factor * i + 1 && g->atteignable(pos, center) && center != pos) {
-					blackboard->write("goal", center);
-					return SUCCESS;
-				}
-				int k = distance - i;
-				for (int x = -k; x <= k; ++x) {
-					for (int y = std::max(-k, -k - x); y <= std::min(k, k - x); ++y) {
-						Hex side = Hex{ x, y } + center;
-						if (g->Contains(side) && g->getNode(side).getValue() >= factor * i + 1 && g->atteignable(pos, side) && side != pos) {
-							blackboard->write("goal", side);
-							return SUCCESS;
-						}
-					}
-				}
-			}
-
-
-
-			throw std::exception("a marche pas");
-			return SUCCESS;
-		}
-
-		ClonePtr clone() override {
-			return new TaskComputeIntermediateGoal;
-		}
-	};
 };
 
 
